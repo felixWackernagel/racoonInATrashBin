@@ -1,22 +1,23 @@
 export enum Block {
-  I = "I",
-  J = "J",
-  L = "L",
-  O = "O",
-  S = "S",
-  T = "T",
-  Z = "Z",
+  A = "A",
+  B = "B",
+  C = "C",
+  D = "D",
 }
 
 export enum EmptyCell {
   Empty = "Empty",
 }
 
-export type CellOptions = Block | EmptyCell;
+export enum Racoon {
+  Racoon = "Racoon",
+}
+
+export type CellOptions = Block | EmptyCell | Racoon;
 
 export type BoardShape = CellOptions[][];
 
-export type BlockShape = boolean[][];
+export type BlockShape = number[][];
 
 type ShapesObj = {
   [key in Block]: {
@@ -25,53 +26,30 @@ type ShapesObj = {
 };
 
 export const SHAPES: ShapesObj = {
-  I: {
+  A: {
     shape: [
-      [false, false, false, false],
-      [false, false, false, false],
-      [true, true, true, true],
-      [false, false, false, false],
+      [0, 1, 0],
+      [1, 2, 1],
     ],
   },
-  J: {
+  B: {
     shape: [
-      [false, false, false],
-      [true, false, false],
-      [true, true, true],
+      [1, 2, 1, 1],
+      [0, 0, 0, 1],
     ],
   },
-  L: {
+  C: {
     shape: [
-      [false, false, false],
-      [false, false, true],
-      [true, true, true],
+      [1, 2],
+      [0, 1],
+      [0, 2],
     ],
   },
-  O: {
+  D: {
     shape: [
-      [true, true],
-      [true, true],
-    ],
-  },
-  S: {
-    shape: [
-      [false, false, false],
-      [false, true, true],
-      [true, true, false],
-    ],
-  },
-  T: {
-    shape: [
-      [false, false, false],
-      [false, true, false],
-      [true, true, true],
-    ],
-  },
-  Z: {
-    shape: [
-      [false, false, false],
-      [true, true, false],
-      [false, true, true],
+      [0, 1, 0],
+      [2, 1, 0],
+      [0, 1, 2],
     ],
   },
 };

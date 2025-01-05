@@ -1,12 +1,21 @@
 <script setup lang="ts">
 import Board from "./components/Board.vue";
-import { useGame } from "./composables/useGame";
+import { useLevel } from "@/composables/useLevel";
 
-const { board } = useGame();
+const { level } = useLevel();
 </script>
 
 <template>
-  <Board currentBoard="{board}"></Board>
-</template>
+  <select
+    v-model="level"
+    name="level-select"
+    id="level-select"
+    class="level-select"
+  >
+    <option v-for="lv in 50" :value="lv" :key="lv" :disabled="lv > 2">
+      Level {{ lv.toString() }}
+    </option>
+  </select>
 
-<style scoped></style>
+  <Board />
+</template>
