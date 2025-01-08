@@ -1,19 +1,23 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useLevel } from "@/composables/useLevel";
+import { useBoard } from "@/composables/useBoard";
 
-const { level, board } = useLevel();
+const { level } = useLevel();
+const { board } = useBoard();
 
 const className = computed(() => `level-${level.value.toString()}`);
 </script>
 
 <template>
   <div :class="['board', className]">
-    <div v-for="cell in 25" :key="cell" class="cell">
-      <div class="content">
-        <span v-if="board.racoons.includes(cell)" class="racoon">🦝</span>
+    <template v-for="(row,i) in board" :key="i">
+      <div v-for="(column, j) in row" :key="j" class="cell">
+        <div class="content">
+          <span v-if="column === 1" class="racoon">🦝</span>
+        </div>
       </div>
-    </div>
+    </template>
   </div>
 </template>
 

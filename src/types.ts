@@ -25,6 +25,19 @@ type ShapesObj = {
   };
 };
 
+export interface Piece {
+  block: Block;
+  rotations: number;
+  startCell: number;
+}
+
+export interface Data {
+  difficulty: string;
+  racoons: number[];
+  board: number[][];
+  pieces: Piece[];
+}
+
 export const SHAPES: ShapesObj = {
   A: {
     shape: [
