@@ -19,7 +19,7 @@ export type BoardShape = CellOptions[][];
 
 export type BlockShape = number[][];
 
-type ShapesObj = {
+export type ShapesObj = {
   [key in Block]: {
     shape: BlockShape;
   };
@@ -47,15 +47,15 @@ export const SHAPES: ShapesObj = {
   },
   B: {
     shape: [
-      [1, 2, 1, 1],
-      [0, 0, 0, 1],
+      [1, 2, 1],
+      [0, 0, 1],
     ],
   },
   C: {
     shape: [
       [1, 2],
       [0, 1],
-      [0, 2],
+      [0, 1],
     ],
   },
   D: {

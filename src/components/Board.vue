@@ -15,6 +15,14 @@ const className = computed(() => `level-${level.value.toString()}`);
       <div v-for="(column, j) in row" :key="j" class="cell">
         <div class="content">
           <span v-if="column === 1" class="racoon">🦝</span>
+          <span v-if="column === 2" class="block block--a">A</span>
+          <span v-if="column === -2" class="block block--a trash-bin">🗑️</span>
+          <span v-if="column === 3" class="block block--b">B</span>
+          <span v-if="column === -3" class="block block--b trash-bin">🗑️</span>
+          <span v-if="column === 4" class="block block--c">C</span>
+          <span v-if="column === -4" class="block block--c trash-bin">🗑️</span>
+          <span v-if="column === 5" class="block block--d">D</span>
+          <span v-if="column === -5" class="block block--d trash-bin">🗑️</span>
         </div>
       </div>
     </template>
@@ -52,4 +60,29 @@ const className = computed(() => `level-${level.value.toString()}`);
   justify-content: center;
   font-size: 30px;
 }
+
+.block {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+.block--a {
+  background-color: #727D73;
+}
+
+.block--b {
+  background-color: #AAB99A;
+}
+
+.block--c {
+  background-color: #D0DDD0;
+}
+
+.block--d {
+  background-color: #F0F0D7;
+}
+
 </style>

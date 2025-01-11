@@ -1,7 +1,7 @@
-import type { BlockShape } from "@/types";
-import { useLevel } from "@/composables/useLevel";
+import type {BlockShape} from "@/types";
+import {Block, SHAPES} from "@/types";
+import {useLevel} from "@/composables/useLevel";
 import {ref} from "vue";
-import {SHAPES} from "@/types";
 
 const { levelData } = useLevel();
 
@@ -38,6 +38,10 @@ export function useBoard() {
 
     return coordinates;
   };
+
+  const blockToNumber = (block: Block): number => {
+    return Object.keys( Block ).indexOf( block ) + 2;
+  }
 
   // /**
   //  * This function spawns a piece on the game board and returns if the spawn succeeded.
@@ -77,7 +81,8 @@ export function useBoard() {
     coordinates.forEach( ([row, column, cell]: [number, number, number]) => {
       let x = row + startCoordinates[0];
       let y = column + startCoordinates[1];
-      board.value[x][y] = 2; // ToDo 1 means racoon and 2 block but where is the trash bin inside block
+      let isTrashBin = cell == 2;
+      board.value[x][y] = blockToNumber(piece.block) * (isTrashBin ? -1 : 1);
     });
   });
 
