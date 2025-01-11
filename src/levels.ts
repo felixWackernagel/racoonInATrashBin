@@ -18,21 +18,21 @@ export const levels: Data[] = [
         rotations: 0,
         startCell: 16,
       },
-      {
-        block: Block.B,
-        rotations: 0,
-        startCell: 18,
-      },
-      {
-        block: Block.C,
-        rotations: 0,
-        startCell: 3,
-      },
-      {
-        block: Block.D,
-        rotations: 0,
-        startCell: 0,
-      },
+      // {
+      //   block: Block.B,
+      //   rotations: 0,
+      //   startCell: 18,
+      // },
+      // {
+      //   block: Block.C,
+      //   rotations: 0,
+      //   startCell: 3,
+      // },
+      // {
+      //   block: Block.D,
+      //   rotations: 0,
+      //   startCell: 1,
+      // },
     ]
   },
   {

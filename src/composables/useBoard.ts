@@ -1,6 +1,7 @@
 import type { BlockShape } from "@/types";
 import { useLevel } from "@/composables/useLevel";
 import {ref} from "vue";
+import {SHAPES} from "@/types";
 
 const { levelData } = useLevel();
 
@@ -15,13 +16,27 @@ export function useBoard() {
   ]);
 
   const cellToCoordinates = (cell: number): number[] => {
-    let normalized = cell - 1;
-    if( normalized < 5 ) {
-      return [0, normalized];
-    }
-    let column = normalized % 5;
-    let row = ( normalized - column ) / 5;
+    let row = cell <= 5 ? 0 : ( ( cell - ( cell % 5 ) ) / 5 );
+    let column = ( cell <= 5 ? cell : ( cell % 5 ) ) - 1;
     return [row, column];
+  };
+
+  const shapeToCoordinates = (shape: number[][]): number[][] => {
+    let coordinates = [];
+
+    let rows = shape.length;
+    let columns = shape[0].length;
+
+    for( let row = 0; row < rows; row++ ) {
+      for( let column = 0; column < columns; column++ ) {
+        let cell = shape[row][column];
+        if( cell > 0 ) {
+          coordinates.push([row, column, cell]);
+        }
+      }
+    }
+
+    return coordinates;
   };
 
   // /**
@@ -52,10 +67,21 @@ export function useBoard() {
   //   return true;
   // };
 
-  // levelData.value.pieces.forEach( piece => {
-  //   let offset = cellToCoordinatesOffset( piece.startCell );
-  // });
+  levelData.value.pieces.forEach( piece => {
+    let blockShape = SHAPES[piece.block].shape;
+    for( let rotation = 0; rotation < piece.rotations; rotation++ ) {
+      blockShape = rotateBlockClockwise( blockShape );
+    }
+    let startCoordinates = cellToCoordinates( piece.startCell );
+    let coordinates = shapeToCoordinates( blockShape );
+    coordinates.forEach( ([row, column, cell]: [number, number, number]) => {
+      let x = row + startCoordinates[0];
+      let y = column + startCoordinates[1];
+      board.value[x][y] = 2; // ToDo 1 means racoon and 2 block but where is the trash bin inside block
+    });
+  });
 
+  // place racoons on board
   levelData.value.racoons.map( cellToCoordinates ).forEach( ([row, column]: [number, number]) => {
     board.value[row][column] = 1;
   } );
