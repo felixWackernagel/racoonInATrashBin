@@ -4,28 +4,47 @@ import { useLevel } from "@/composables/useLevel";
 import { useBoard } from "@/composables/useBoard";
 
 const { level } = useLevel();
-const { board } = useBoard();
+const { boardState, selectPiece } = useBoard();
 
 const className = computed(() => `level-${level.value.toString()}`);
+
+function rotate() {}
+function left() {}
+function top() {}
+function bottom() {}
+function right() {}
 </script>
 
 <template>
   <div :class="['board', className]">
-    <template v-for="(row,i) in board" :key="i">
-      <div v-for="(column, j) in row" :key="j" class="cell">
+    <template v-for="(row, rowIndex) in boardState.board" :key="rowIndex">
+      <div v-for="(column, columnIndex) in row" :key="columnIndex" class="cell">
         <div class="content">
-          <span v-if="column === 1" class="racoon">🦝</span>
-          <span v-if="column === 2" class="block block--a">A</span>
-          <span v-if="column === -2" class="block block--a trash-bin">🗑️</span>
-          <span v-if="column === 3" class="block block--b">B</span>
-          <span v-if="column === -3" class="block block--b trash-bin">🗑️</span>
-          <span v-if="column === 4" class="block block--c">C</span>
-          <span v-if="column === -4" class="block block--c trash-bin">🗑️</span>
-          <span v-if="column === 5" class="block block--d">D</span>
-          <span v-if="column === -5" class="block block--d trash-bin">🗑️</span>
+          <div
+            :class="{
+              racoon: column === 1,
+              'trash-bin': column < 0,
+              empty: column === 0,
+              block: Math.abs(column) > 1,
+              'block--a': Math.abs(column) === 2,
+              'block--b': Math.abs(column) === 3,
+              'block--c': Math.abs(column) === 4,
+              'block--d': Math.abs(column) === 5,
+            }"
+            @click="selectPiece(column)"
+          >
+            {{ column === 1 ? "🦝" : column < 0 ? "🗑️" : "" }}
+          </div>
         </div>
       </div>
     </template>
+  </div>
+  <div class="controls">
+    <button @click="rotate">Rotate</button>
+    <button @click="left">Left</button>
+    <button @click="top">Top</button>
+    <button @click="bottom">Bottom</button>
+    <button @click="right">Right</button>
   </div>
 </template>
 
@@ -61,28 +80,33 @@ const className = computed(() => `level-${level.value.toString()}`);
   font-size: 30px;
 }
 
+.racoon,
+.empty {
+  pointer-events: none;
+}
+
 .block {
   display: flex;
   width: 100%;
   height: 100%;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
 }
 
 .block--a {
-  background-color: #727D73;
+  background-color: #727d73;
 }
 
 .block--b {
-  background-color: #AAB99A;
+  background-color: #aab99a;
 }
 
 .block--c {
-  background-color: #D0DDD0;
+  background-color: #d0ddd0;
 }
 
 .block--d {
-  background-color: #F0F0D7;
+  background-color: #b26bb7;
 }
-
 </style>

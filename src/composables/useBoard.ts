@@ -1,23 +1,31 @@
-import type {BlockShape} from "@/types";
-import {Block, SHAPES} from "@/types";
-import {useLevel} from "@/composables/useLevel";
-import {ref} from "vue";
+import type { BlockShape, Piece } from "@/types";
+import { Block, SHAPES } from "@/types";
+import { useLevel } from "@/composables/useLevel";
+import { reactive, ref } from "vue";
 
 const { levelData } = useLevel();
 
-export function useBoard() {
+interface State {
+  board: number[][];
+  selectedPiece?: Piece;
+}
 
-  const board = ref([
-    [0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0]
-  ]);
+export function useBoard() {
+  const pieces = ref(new Map<number, Piece>());
+
+  const boardState: State = reactive({
+    board: [
+      [0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0],
+    ],
+  });
 
   const cellToCoordinates = (cell: number): number[] => {
-    let row = cell <= 5 ? 0 : ( ( cell - ( cell % 5 ) ) / 5 );
-    let column = ( cell <= 5 ? cell : ( cell % 5 ) ) - 1;
+    let row = cell <= 5 ? 0 : (cell - (cell % 5)) / 5;
+    let column = (cell <= 5 ? cell : cell % 5) - 1;
     return [row, column];
   };
 
@@ -27,10 +35,10 @@ export function useBoard() {
     let rows = shape.length;
     let columns = shape[0].length;
 
-    for( let row = 0; row < rows; row++ ) {
-      for( let column = 0; column < columns; column++ ) {
+    for (let row = 0; row < rows; row++) {
+      for (let column = 0; column < columns; column++) {
         let cell = shape[row][column];
-        if( cell > 0 ) {
+        if (cell > 0) {
           coordinates.push([row, column, cell]);
         }
       }
@@ -40,8 +48,8 @@ export function useBoard() {
   };
 
   const blockToNumber = (block: Block): number => {
-    return Object.keys( Block ).indexOf( block ) + 2;
-  }
+    return Object.keys(Block).indexOf(block) + 2;
+  };
 
   // /**
   //  * This function spawns a piece on the game board and returns if the spawn succeeded.
@@ -71,25 +79,30 @@ export function useBoard() {
   //   return true;
   // };
 
-  levelData.value.pieces.forEach( piece => {
+  levelData.value.pieces.forEach((piece) => {
     let blockShape = SHAPES[piece.block].shape;
-    for( let rotation = 0; rotation < piece.rotations; rotation++ ) {
-      blockShape = rotateBlockClockwise( blockShape );
+    for (let rotation = 0; rotation < piece.rotations; rotation++) {
+      blockShape = rotateBlockClockwise(blockShape);
     }
-    let startCoordinates = cellToCoordinates( piece.startCell );
-    let coordinates = shapeToCoordinates( blockShape );
-    coordinates.forEach( ([row, column, cell]: [number, number, number]) => {
+    let startCoordinates = cellToCoordinates(piece.startCell);
+    let coordinates = shapeToCoordinates(blockShape);
+    let blockNumber = blockToNumber(piece.block);
+    coordinates.forEach(([row, column, cell]: [number, number, number]) => {
       let x = row + startCoordinates[0];
       let y = column + startCoordinates[1];
       let isTrashBin = cell == 2;
-      board.value[x][y] = blockToNumber(piece.block) * (isTrashBin ? -1 : 1);
+      boardState.board[x][y] = blockNumber * (isTrashBin ? -1 : 1);
     });
+
+    pieces.value.set(blockNumber, piece);
   });
 
   // place racoons on board
-  levelData.value.racoons.map( cellToCoordinates ).forEach( ([row, column]: [number, number]) => {
-    board.value[row][column] = 1;
-  } );
+  levelData.value.racoons
+    .map(cellToCoordinates)
+    .forEach(([row, column]: [number, number]) => {
+      boardState.board[row][column] = 1;
+    });
 
   /**
    * Rotates a Block element clockwise (90 degree).
@@ -118,5 +131,15 @@ export function useBoard() {
     return rotated;
   };
 
-  return { board };
+  const selectPiece = (cellNumber: number): void => {
+    const absoluteNumber = Math.abs(cellNumber);
+    if (absoluteNumber < 2) {
+      return;
+    }
+
+    boardState.selectedPiece = pieces.value.get(absoluteNumber);
+    console.error(boardState);
+  };
+
+  return { boardState, selectPiece };
 }
