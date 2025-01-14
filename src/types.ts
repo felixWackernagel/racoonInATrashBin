@@ -1,68 +1,40 @@
-export enum Block {
-  A = "A",
-  B = "B",
-  C = "C",
-  D = "D",
+export type ModelType = "r" | "a" | "b" | "c" | "d"
+
+export type Model = {
+  [key in ModelType]: number[][]
 }
 
-export enum EmptyCell {
-  Empty = "Empty",
+export const MODELS: Model = {
+  r: [
+    [1]
+  ],
+  a: [
+    [0, 1, 0],
+    [1, 2, 1]
+  ],
+  b: [
+    [1, 2, 1],
+    [0, 0, 1]
+  ],
+  c: [
+    [1, 2],
+    [0, 1],
+    [0, 1]
+  ],
+  d: [
+    [0, 1, 0],
+    [2, 1, 0],
+    [0, 1, 2]
+  ]
 }
 
-export enum Racoon {
-  Racoon = "Racoon",
+export interface Part {
+  type: ModelType
+  rotations: number
+  position: number
 }
 
-export type CellOptions = Block | EmptyCell | Racoon;
-
-export type BoardShape = CellOptions[][];
-
-export type BlockShape = number[][];
-
-export type ShapesObj = {
-  [key in Block]: {
-    shape: BlockShape;
-  };
-};
-
-export interface Piece {
-  block: Block;
-  rotations: number;
-  startCell: number;
+export interface Level {
+  difficulty: string
+  parts: Part[]
 }
-
-export interface Data {
-  difficulty: string;
-  racoons: number[];
-  board: number[][];
-  pieces: Piece[];
-}
-
-export const SHAPES: ShapesObj = {
-  A: {
-    shape: [
-      [0, 1, 0],
-      [1, 2, 1],
-    ],
-  },
-  B: {
-    shape: [
-      [1, 2, 1],
-      [0, 0, 1],
-    ],
-  },
-  C: {
-    shape: [
-      [1, 2],
-      [0, 1],
-      [0, 1],
-    ],
-  },
-  D: {
-    shape: [
-      [0, 1, 0],
-      [2, 1, 0],
-      [0, 1, 2],
-    ],
-  },
-};

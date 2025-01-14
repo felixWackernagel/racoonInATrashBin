@@ -1,70 +1,103 @@
-import type { Data } from "@/types";
-import {Block} from "@/types";
+import type { Level } from "@/types";
 
-export const levels: Data[] = [
+export const levels: Level[] = [
   {
     difficulty: "Starter",
-    racoons: [1, 5, 8, 16, 24],
-    board: [
-      [1, 5, 4, -4, 1],
-      [-5, 5, 1, 4, 0],
-      [0, 5, -5, 4, 0],
-      [1, 2, 3, -3, 3],
-      [2, -2, 2, 1, 3],
-    ],
-    pieces: [
+    parts: [
       {
-        block: Block.A,
+        type: "r",
         rotations: 0,
-        startCell: 16,
+        position: 1,
       },
       {
-        block: Block.B,
+        type: "r",
         rotations: 0,
-        startCell: 18,
+        position: 5,
       },
       {
-        block: Block.C,
+        type: "r",
         rotations: 0,
-        startCell: 3,
+        position: 8,
       },
       {
-        block: Block.D,
+        type: "r",
         rotations: 0,
-        startCell: 1,
+        position: 16,
+      },
+      {
+        type: "r",
+        rotations: 0,
+        position: 24,
+      },
+      {
+        type: "a",
+        rotations: 0,
+        position: 16,
+      },
+      {
+        type: "b",
+        rotations: 0,
+        position: 18,
+      },
+      {
+        type: "c",
+        rotations: 0,
+        position: 3,
+      },
+      {
+        type: "d",
+        rotations: 0,
+        position: 1,
       },
     ]
   },
   {
     difficulty: "Starter",
-    racoons: [1, 9, 12, 18, 24],
-    board: [
-      [1, 0, -3, 3, 3],
-      [3, 3, 3, 1, -5],
-      [-3, 1, 5, 5, 5],
-      [3, 2, 1, -5, 0],
-      [2, -2, 2, 1, 0],
-    ],
-    pieces: [
+    parts: [
       {
-        block: Block.A,
+        type: "r",
         rotations: 0,
-        startCell: 16,
+        position: 1,
       },
       {
-        block: Block.B,
-        rotations: 3,
-        startCell: 6,
+        type: "r",
+        rotations: 0,
+        position: 9,
       },
       {
-        block: Block.C,
-        rotations: 3,
-        startCell: 3,
+        type: "r",
+        rotations: 0,
+        position: 12,
       },
       {
-        block: Block.D,
+        type: "r",
+        rotations: 0,
+        position: 18,
+      },
+      {
+        type: "r",
+        rotations: 0,
+        position: 24,
+      },
+      {
+        type: "a",
+        rotations: 0,
+        position: 16,
+      },
+      {
+        type: "b",
         rotations: 3,
-        startCell: 8,
+        position: 6,
+      },
+      {
+        type: "c",
+        rotations: 3,
+        position: 3,
+      },
+      {
+        type: "d",
+        rotations: 3,
+        position: 8,
       },
     ]
   },
