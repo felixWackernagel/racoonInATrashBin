@@ -5,23 +5,27 @@ import { reactive, ref } from "vue";
 
 const { levelData } = useLevel();
 
+interface ActivePart {
+  typeNumber: number;
+  part: Part;
+}
+
 interface State {
-  board: number[][];
-  selectedPiece?: number;
+  board: number[][][];
+  activePart?: ActivePart;
+  parts: Part[];
 }
 
 export function useBoard() {
-  // maybe this should be a list and we filter what we really want
-  const moveableParts = ref(new Map<ModelType, Part>());
-
   const boardState: State = reactive({
     board: [
-      [0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0],
+      [[0], [0], [0], [0], [0]],
+      [[0], [0], [0], [0], [0]],
+      [[0], [0], [0], [0], [0]],
+      [[0], [0], [0], [0], [0]],
+      [[0], [0], [0], [0], [0]],
     ],
+    parts: [],
   });
 
   const positionToCoordinates = (cell: number): number[] => {
@@ -49,39 +53,55 @@ export function useBoard() {
   };
 
   const typeToNumber = (type: ModelType): number => {
-    return Object.keys( MODELS ).indexOf( type ) + 1;
+    return Object.keys(MODELS).indexOf(type) + 1;
   };
 
   const numberToType = (num: number): ModelType | null => {
-    if( num < 1 || num > 5 ) {
-      return null
+    if (num < 1 || num > 5) {
+      return null;
     }
     return <"r" | "a" | "b" | "c" | "d">Object.keys(MODELS)[num - 1];
-  }
+  };
 
-  const drawBoard = (parts: Part[]) => {
-    parts.forEach( part => {
-      let model = MODELS[part.type];
-      for (let rotation = 0; rotation < part.rotations; rotation++) {
-        model = rotateClockwise(model);
-      }
-      let startCoordinates = positionToCoordinates(part.position);
-      let modelCoordinates = modelToCoordinates(model);
-      let boardValue = typeToNumber(part.type);
-      modelCoordinates.forEach(([row, column, cell]: [number, number, number]) => {
+  const removeActivePartFromBoard = () => {
+    boardState.board.forEach((row) => {
+      row.forEach((column) => {
+        if (column.length == 2) {
+          column.pop();
+        }
+      });
+    });
+  };
+
+  const drawPart = (part: Part, cellIndex: number) => {
+    let model = MODELS[part.type];
+    for (let rotation = 0; rotation < part.rotations; rotation++) {
+      model = rotateClockwise(model);
+    }
+    let startCoordinates = positionToCoordinates(part.position);
+    let modelCoordinates = modelToCoordinates(model);
+    let boardValue = typeToNumber(part.type);
+    modelCoordinates.forEach(
+      ([row, column, cell]: [number, number, number]) => {
         let x = row + startCoordinates[0];
         let y = column + startCoordinates[1];
         let isTrashBin = cell === 2;
-        boardState.board[x][y] = boardValue * (isTrashBin ? -1 : 1);
-      });
-
-      if( part.type != "r" ) {
-        moveableParts.value.set( part.type, part );
+        boardState.board[x][y][cellIndex] = boardValue * (isTrashBin ? -1 : 1);
       }
-    } )
-  }
+    );
+  };
 
-  drawBoard( levelData.value.parts );
+  const drawBoard = () => {
+    boardState.parts.forEach((part) => drawPart(part, 0));
+    removeActivePartFromBoard();
+    if (boardState.activePart) {
+      drawPart(boardState.activePart.part, 1);
+    }
+    console.error("state", boardState);
+  };
+
+  boardState.parts.push(...levelData.value.parts);
+  drawBoard();
 
   /**
    * Rotates a Block element clockwise (90 degree).
@@ -110,46 +130,145 @@ export function useBoard() {
     return rotated;
   };
 
-  const selectPiece = (cellNumber: number): void => {
+  const activateOrDeactivatePart = (cellNumber: number): void => {
     const absoluteNumber = Math.abs(cellNumber);
     if (absoluteNumber < 1) {
       return;
     }
-    if( boardState.selectedPiece === absoluteNumber ) {
-      boardState.selectedPiece = undefined;
-    } else {
-      boardState.selectedPiece = absoluteNumber;
+
+    const modelType = numberToType(absoluteNumber);
+    if (!modelType) {
+      return;
     }
+
+    const part = boardState.parts.filter((p) => p.type === modelType)[0];
+    const clone: Part = {
+      type: part.type,
+      rotations: part.rotations,
+      position: part.position,
+    };
+    if (
+      boardState.activePart == undefined ||
+      boardState.activePart.typeNumber !== absoluteNumber
+    ) {
+      boardState.activePart = {
+        part: clone,
+        typeNumber: absoluteNumber,
+      };
+    } else {
+      boardState.activePart = undefined;
+    }
+
+    drawBoard();
   };
 
   const moveUp = () => {
-    // const cellValue = boardState.selectedPiece;
-    // if( cellValue ) {
-    //   const modelType = numberToType( cellValue );
-    //   if( modelType ) {
-    //     const part = moveableParts.value.get( modelType );
-    //     if( part ) {
-    //       part.po
-    //     }
-    //   }
-    // }
+    const activePart = boardState.activePart;
+    if (!activePart) {
+      return;
+    }
+
+    if (activePart.part.position <= 5) {
+      return;
+    }
+
+    activePart.part.position = activePart.part.position - 5;
+
+    drawBoard();
   };
 
   const moveDown = () => {
-    console.error("down")
+    const activePart = boardState.activePart;
+    if (!activePart) {
+      return;
+    }
+
+    let model = MODELS[activePart.part.type];
+    for (let rotation = 0; rotation < activePart.part.rotations; rotation++) {
+      model = rotateClockwise(model);
+    }
+    let modelHeight = model.length - 1;
+
+    if (activePart.part.position + modelHeight * 5 > 20) {
+      return;
+    }
+
+    activePart.part.position = activePart.part.position + 5;
+
+    drawBoard();
   };
 
   const moveLeft = () => {
-    console.error("left")
+    const activePart = boardState.activePart;
+    if (!activePart) {
+      return;
+    }
+
+    if (activePart.part.position % 5 <= 1) {
+      return;
+    }
+
+    activePart.part.position = activePart.part.position - 1;
+
+    drawBoard();
   };
 
   const moveRight = () => {
-    console.error("right")
+    const activePart = boardState.activePart;
+    if (!activePart) {
+      return;
+    }
+
+    let model = MODELS[activePart.part.type];
+    for (let rotation = 0; rotation < activePart.part.rotations; rotation++) {
+      model = rotateClockwise(model);
+    }
+    let modelWidth = model[0].length - 1;
+
+    if ((activePart.part.position % 5) + modelWidth >= 5) {
+      return;
+    }
+
+    activePart.part.position = activePart.part.position + 1;
+
+    drawBoard();
   };
 
   const rotate = () => {
-    console.error("rotate")
+    const activePart = boardState.activePart;
+    if (!activePart) {
+      return;
+    }
+
+    activePart.part.rotations = (activePart.part.rotations + 1) % 4;
+    let model = MODELS[activePart.part.type];
+    for (let rotation = 0; rotation < activePart.part.rotations; rotation++) {
+      model = rotateClockwise(model);
+    }
+    let modelHeight = model.length - 1;
+    let modelWidth = model[0].length - 1;
+    let coordinates = positionToCoordinates(activePart.part.position);
+
+    if (coordinates[0] + modelHeight > 4) {
+      let diff = coordinates[0] + modelHeight - 4;
+      activePart.part.position = activePart.part.position - diff * 5;
+    }
+
+    if (coordinates[1] + modelWidth > 4) {
+      let diff = coordinates[1] + modelWidth - 4;
+      activePart.part.position = activePart.part.position - diff;
+    }
+
+    drawBoard();
   };
 
-  return { boardState, selectPiece, moveUp, moveDown, moveLeft, moveRight, rotate };
+  return {
+    boardState,
+    activateOrDeactivatePart,
+    moveUp,
+    moveDown,
+    moveLeft,
+    moveRight,
+    rotate,
+  };
 }
