@@ -1,12 +1,20 @@
 <script setup lang="ts">
+import {computed} from "vue";
+
 interface Props {
   value: number;
-  conflict: boolean;
   moveable: boolean;
+  underlyingCellValue?: number;
   active: boolean;
   solved: boolean;
 }
 const props = defineProps<Props>();
+
+const conflict = computed(() => {
+  return props.moveable && !props.solved &&
+  Math.abs( props.underlyingCellValue ) >= 1 &&
+  Math.abs(props.underlyingCellValue) !== Math.abs(props.value)
+});
 </script>
 
 <template>
@@ -71,6 +79,7 @@ const props = defineProps<Props>();
 
 .block--conflict {
   background-color: #eb5a3c;
+  opacity: 0.5;
 }
 
 .block--moveable {

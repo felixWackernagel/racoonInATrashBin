@@ -1,7 +1,7 @@
 import type { ModelType, Part } from "@/types";
 import { MODELS } from "@/types";
 import { useLevel } from "@/composables/useLevel";
-import { reactive, ref } from "vue";
+import { reactive } from "vue";
 
 const { levelData } = useLevel();
 
@@ -97,7 +97,6 @@ export function useBoard() {
     if (boardState.activePart) {
       drawPart(boardState.activePart.part, 1);
     }
-    console.error("state", boardState);
   };
 
   boardState.parts.push(...levelData.value.parts);
@@ -111,7 +110,7 @@ export function useBoard() {
    * 1 1 1 => 1 1
    *          1 0
    *
-   * @param {BlockShape} block
+   * @param block
    * @returns rotated block
    */
   const rotateClockwise = (block: number[][]): number[][] => {

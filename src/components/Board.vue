@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import {computed, onMounted, onUnmounted} from "vue";
 import { useLevel } from "@/composables/useLevel";
 import { useBoard } from "@/composables/useBoard";
 import Cell from "@/components/Cell.vue";
@@ -16,6 +16,46 @@ const {
 } = useBoard();
 
 const className = computed(() => `level-${level.value.toString()}`);
+
+const onKeyUp = event => {
+  if( !boardState.activePart ) {
+    return;
+  }
+
+  switch( event.key ) {
+    case "ArrowRight":
+      moveRight();
+      break;
+    case "ArrowLeft":
+      moveLeft();
+      break;
+    case "ArrowUp":
+      moveUp();
+      break;
+    case "ArrowDown":
+      moveDown();
+      break;
+    case " ":
+      rotate();
+      break;
+    case "Escape":
+      activateOrDeactivatePart( boardState.activePart.typeNumber );
+      break;
+    case "Enter":
+      break;
+    default:
+      break;
+  }
+}
+
+onMounted( () => {
+  document.addEventListener('keyup', onKeyUp );
+} );
+
+onUnmounted(() => {
+  document.removeEventListener('keyup', onKeyUp );
+});
+
 </script>
 
 <template>
@@ -26,17 +66,13 @@ const className = computed(() => `level-${level.value.toString()}`);
           <template v-for="(cell, index) in column" :key="index">
             <Cell
               :value="cell"
-              :conflict="
-                index == 1 &&
-                Math.abs(column[0]) > 1 &&
-                Math.abs(column[0]) != Math.abs(cell)
-              "
-              :moveable="index == 1"
+              :underlying-cell-value="index === 1 ? column[0] : null"
+              :moveable="index === 1"
               :active="
-                index == 0 &&
+                index === 0 &&
                 boardState.activePart?.typeNumber === Math.abs(cell)
               "
-              :solved="index == 1 && column[0] === 1 && column[0] + cell < 0"
+              :solved="index === 1 && column[0] === 1 && column[0] + cell < 0"
               @click="index === 0 && activateOrDeactivatePart(column[0])"
             />
           </template>
