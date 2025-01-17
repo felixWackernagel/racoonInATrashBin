@@ -1,10 +1,13 @@
-export type ModelType = "r" | "a" | "b" | "c" | "d"
+export type ModelType = "e" | "r" | "a" | "b" | "c" | "d"
 
 export type Model = {
   [key in ModelType]: number[][]
 }
 
 export const MODELS: Model = {
+  e: [
+    [0]
+  ],
   r: [
     [1]
   ],

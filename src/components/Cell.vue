@@ -2,8 +2,10 @@
 import {computed} from "vue";
 
 interface Props {
+  row: number;
+  column: number;
   value: number;
-  moveable: boolean;
+  movable: boolean;
   underlyingCellValue?: number;
   active: boolean;
   solved: boolean;
@@ -11,7 +13,7 @@ interface Props {
 const props = defineProps<Props>();
 
 const conflict = computed(() => {
-  return props.moveable && !props.solved &&
+  return props.movable && !props.solved &&
   Math.abs( props.underlyingCellValue ) >= 1 &&
   Math.abs(props.underlyingCellValue) !== Math.abs(props.value)
 });
@@ -20,17 +22,21 @@ const conflict = computed(() => {
 <template>
   <div
     :class="{
-      racoon: value === 1,
+      block: true,
+      'block--racoon': value === 1,
       'trash-bin': value < 0,
-      empty: value === 0,
-      block: Math.abs(value) > 1,
+      'block--empty': value === 0,
       'block--a': Math.abs(value) === 2,
       'block--b': Math.abs(value) === 3,
       'block--c': Math.abs(value) === 4,
       'block--d': Math.abs(value) === 5,
       'block--conflict': conflict,
-      'block--moveable': moveable,
+      'block--movable': movable,
       'block--active': active,
+      'edge--top': row === 0,
+      'edge--right': column === 4,
+      'edge--bottom': row === 4,
+      'edge--left': column === 0
     }"
   >
     {{ solved ? "🍔" : value === 1 ? "🦝" : value < 0 ? "🛢️" : "" }}
@@ -38,15 +44,6 @@ const conflict = computed(() => {
 </template>
 
 <style>
-.racoon,
-.empty {
-  pointer-events: none;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
 
 .block {
   display: flex;
@@ -55,6 +52,13 @@ const conflict = computed(() => {
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  border: 1px solid #3f3f3f;
+  box-sizing: border-box;
+}
+
+.block--racoon,
+.block--empty {
+  pointer-events: none;
 }
 
 .block--a {
@@ -74,7 +78,9 @@ const conflict = computed(() => {
 }
 
 .block--active {
-  opacity: 0;
+  background-color: transparent;
+  font-size: 0;
+  pointer-events: none;
 }
 
 .block--conflict {
@@ -82,11 +88,27 @@ const conflict = computed(() => {
   opacity: 0.5;
 }
 
-.block--moveable {
+.block--movable {
   position: absolute;
   top: 0;
   left: 0;
   z-index: 10;
   box-shadow: inset 0 0 0 2px #ff9d23;
+}
+
+.edge--left {
+  border-left-width: 2px;
+}
+
+.edge--right {
+  border-right-width: 2px;
+}
+
+.edge--top {
+  border-top-width: 2px;
+}
+
+.edge--bottom {
+  border-bottom-width: 2px;
 }
 </style>

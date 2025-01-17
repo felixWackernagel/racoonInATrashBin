@@ -23,15 +23,19 @@ const onKeyUp = event => {
   }
 
   switch( event.key ) {
+    case "d":
     case "ArrowRight":
       moveRight();
       break;
+    case "a":
     case "ArrowLeft":
       moveLeft();
       break;
+    case "w":
     case "ArrowUp":
       moveUp();
       break;
+    case "s":
     case "ArrowDown":
       moveDown();
       break;
@@ -62,21 +66,21 @@ onUnmounted(() => {
   <div :class="['board', className]">
     <template v-for="(row, rowIndex) in boardState.board" :key="rowIndex">
       <div v-for="(column, columnIndex) in row" :key="columnIndex" class="cell">
-        <div class="content">
-          <template v-for="(cell, index) in column" :key="index">
-            <Cell
-              :value="cell"
-              :underlying-cell-value="index === 1 ? column[0] : null"
-              :moveable="index === 1"
-              :active="
-                index === 0 &&
-                boardState.activePart?.typeNumber === Math.abs(cell)
-              "
-              :solved="index === 1 && column[0] === 1 && column[0] + cell < 0"
-              @click="index === 0 && activateOrDeactivatePart(column[0])"
-            />
-          </template>
-        </div>
+        <template v-for="(cell, index) in column" :key="index">
+          <Cell
+            :row="rowIndex"
+            :column="columnIndex"
+            :value="cell"
+            :underlying-cell-value="index === 1 ? column[0] : null"
+            :movable="index === 1"
+            :active="
+              index === 0 &&
+              boardState.activePart?.typeNumber === Math.abs(cell)
+            "
+            :solved="index === 1 && column[0] === 1 && column[0] + cell < 0"
+            @click="index === 0 ? activateOrDeactivatePart(column[0]) : activateOrDeactivatePart(Math.abs(cell))"
+          />
+        </template>
       </div>
     </template>
   </div>
@@ -92,44 +96,13 @@ onUnmounted(() => {
 <style>
 .board {
   display: grid;
-  grid-template-columns: repeat(5, 48px);
-  grid-template-rows: repeat(5, 48px);
+  grid-template-columns: repeat(5, 50px);
+  grid-template-rows: repeat(5, 50px);
   width: fit-content;
 }
 
 .board .cell {
   position: relative;
-  border: 1px solid #3f3f3f;
-}
-
-.board .cell:nth-child(5n-4) {
-  border-left-width: 2px;
-}
-
-.board .cell:nth-child(5n) {
-  border-right-width: 2px;
-}
-
-.board .cell:nth-child(-n + 5) {
-  border-top-width: 2px;
-}
-
-.board .cell:nth-child(n + 21) {
-  border-bottom-width: 2px;
-}
-
-.board .cell::before {
-  content: "";
-  display: block;
-  padding-top: 100%;
-}
-
-.board .cell .content {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
   font-size: 30px;
 }
 </style>

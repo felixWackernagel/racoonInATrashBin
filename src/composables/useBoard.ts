@@ -53,24 +53,18 @@ export function useBoard() {
   };
 
   const typeToNumber = (type: ModelType): number => {
-    return Object.keys(MODELS).indexOf(type) + 1;
+    return Object.keys(MODELS).indexOf(type);
   };
 
-  const numberToType = (num: number): ModelType | null => {
-    if (num < 1 || num > 5) {
-      return null;
-    }
-    return <"r" | "a" | "b" | "c" | "d">Object.keys(MODELS)[num - 1];
+  const numberToType = (num: number): ModelType => {
+    return <"e" | "r" | "a" | "b" | "c" | "d">Object.keys(MODELS)[num];
   };
 
-  const removeActivePartFromBoard = () => {
-    boardState.board.forEach((row) => {
-      row.forEach((column) => {
-        if (column.length == 2) {
-          column.pop();
-        }
-      });
-    });
+  const removeActivePartsFromBoard = () => {
+    boardState.board
+      .flat(1)
+      .filter( cell => cell.length == 2 )
+      .map( activeCell => activeCell.pop() );
   };
 
   const drawPart = (part: Part, cellIndex: number) => {
@@ -93,7 +87,7 @@ export function useBoard() {
 
   const drawBoard = () => {
     boardState.parts.forEach((part) => drawPart(part, 0));
-    removeActivePartFromBoard();
+    removeActivePartsFromBoard();
     if (boardState.activePart) {
       drawPart(boardState.activePart.part, 1);
     }
@@ -136,10 +130,6 @@ export function useBoard() {
     }
 
     const modelType = numberToType(absoluteNumber);
-    if (!modelType) {
-      return;
-    }
-
     const part = boardState.parts.filter((p) => p.type === modelType)[0];
     const clone: Part = {
       type: part.type,
