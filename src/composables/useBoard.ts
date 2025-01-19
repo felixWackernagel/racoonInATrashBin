@@ -16,18 +16,18 @@ interface State {
   parts: Part[];
 }
 
-export function useBoard() {
-  const boardState: State = reactive({
-    board: [
-      [[0], [0], [0], [0], [0]],
-      [[0], [0], [0], [0], [0]],
-      [[0], [0], [0], [0], [0]],
-      [[0], [0], [0], [0], [0]],
-      [[0], [0], [0], [0], [0]],
-    ],
-    parts: [],
-  });
+const boardState: State = reactive({
+  board: [
+    [[0], [0], [0], [0], [0]],
+    [[0], [0], [0], [0], [0]],
+    [[0], [0], [0], [0], [0]],
+    [[0], [0], [0], [0], [0]],
+    [[0], [0], [0], [0], [0]],
+  ],
+  parts: [],
+});
 
+export function useBoard() {
   const positionToCoordinates = (cell: number): number[] => {
     let row = cell <= 5 ? 0 : (cell - (cell % 5)) / 5;
     let column = (cell <= 5 ? cell : cell % 5) - 1;
@@ -63,8 +63,8 @@ export function useBoard() {
   const removeActivePartsFromBoard = () => {
     boardState.board
       .flat(1)
-      .filter( cell => cell.length == 2 )
-      .map( activeCell => activeCell.pop() );
+      .filter((cell) => cell.length == 2)
+      .map((activeCell) => activeCell.pop());
   };
 
   const drawPart = (part: Part, cellIndex: number) => {
@@ -86,10 +86,23 @@ export function useBoard() {
   };
 
   const drawBoard = () => {
-    boardState.parts.forEach((part) => drawPart(part, 0));
+    let activePart = boardState.activePart;
+
+    let drawableParts = activePart
+      ? boardState.parts.filter((part) => part.type != activePart.part.type)
+      : boardState.parts;
+    drawableParts.forEach((part) => drawPart(part, 0));
+
+    if (activePart) {
+      boardState.board
+        .flat(1)
+        .filter((part) => Math.abs(part[0]) === activePart.typeNumber)
+        .forEach((part) => (part[0] = 0));
+    }
+
     removeActivePartsFromBoard();
-    if (boardState.activePart) {
-      drawPart(boardState.activePart.part, 1);
+    if (activePart) {
+      drawPart(activePart.part, 1);
     }
   };
 
@@ -251,6 +264,46 @@ export function useBoard() {
     drawBoard();
   };
 
+  const place = () => {
+    const activePart = boardState.activePart;
+    if (!activePart) {
+      return;
+    }
+
+    const type = typeToNumber(activePart.part.type);
+    const hasConflict = boardState.board
+      .flat(1)
+      .filter((cell) => cell.length == 2)
+      .filter((cell) => Math.abs(cell[1]) === type)
+      .some((cell) => {
+        const below = cell[0];
+        const above = cell[1];
+        const belowIsNotEmpty = below != 0 && Math.abs(below) != type;
+        const isRacoonInTrashBin = below + above < 0;
+        return belowIsNotEmpty && !isRacoonInTrashBin;
+      });
+    if (hasConflict) {
+      return;
+    }
+
+    boardState.board
+      .flat(1)
+      .filter((cell) => cell.length == 1)
+      .filter((cell) => Math.abs(cell[0]) === type)
+      .some((cell) => (cell[0] = 0));
+
+    boardState.parts
+      .filter((part) => part.type === activePart.part.type)
+      .forEach((part) => {
+        part.position = activePart.part.position;
+        part.rotations = activePart.part.rotations;
+      });
+
+    boardState.activePart = undefined;
+
+    drawBoard();
+  };
+
   return {
     boardState,
     activateOrDeactivatePart,
@@ -259,5 +312,6 @@ export function useBoard() {
     moveLeft,
     moveRight,
     rotate,
+    place,
   };
 }

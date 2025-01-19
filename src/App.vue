@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import Board from "./components/Board.vue";
+import Board from "@/components/Board.vue";
+import Controller from "@/components/Controller.vue";
 import { useLevel } from "@/composables/useLevel";
 
 const { level } = useLevel();
@@ -18,4 +19,6 @@ const { level } = useLevel();
   </select>
 
   <Board />
+
+  <Controller />
 </template>

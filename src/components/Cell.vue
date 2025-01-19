@@ -1,21 +1,27 @@
 <script setup lang="ts">
-import {computed} from "vue";
+import { computed } from "vue";
 
 interface Props {
   row: number;
   column: number;
   value: number;
   movable: boolean;
-  underlyingCellValue?: number;
+  underlyingCellValue: number | null;
   active: boolean;
   solved: boolean;
 }
 const props = defineProps<Props>();
 
 const conflict = computed(() => {
-  return props.movable && !props.solved &&
-  Math.abs( props.underlyingCellValue ) >= 1 &&
-  Math.abs(props.underlyingCellValue) !== Math.abs(props.value)
+  if (props.underlyingCellValue === null) {
+    return false;
+  }
+  return (
+    props.movable &&
+    !props.solved &&
+    Math.abs(props.underlyingCellValue) >= 1 &&
+    Math.abs(props.underlyingCellValue) !== Math.abs(props.value)
+  );
 });
 </script>
 
@@ -36,15 +42,14 @@ const conflict = computed(() => {
       'edge--top': row === 0,
       'edge--right': column === 4,
       'edge--bottom': row === 4,
-      'edge--left': column === 0
+      'edge--left': column === 0,
     }"
   >
-    {{ solved ? "🍔" : value === 1 ? "🦝" : value < 0 ? "🛢️" : "" }}
+    {{ solved ? "🛢️" : value === 1 ? "🦝" : value < 0 ? "🛢️" : "" }}
   </div>
 </template>
 
 <style>
-
 .block {
   display: flex;
   width: 100%;

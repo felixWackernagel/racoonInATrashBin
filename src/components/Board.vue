@@ -1,65 +1,13 @@
 <script setup lang="ts">
-import {computed, onMounted, onUnmounted} from "vue";
+import { computed, onMounted, onUnmounted } from "vue";
 import { useLevel } from "@/composables/useLevel";
 import { useBoard } from "@/composables/useBoard";
 import Cell from "@/components/Cell.vue";
 
 const { level } = useLevel();
-const {
-  boardState,
-  activateOrDeactivatePart,
-  moveUp,
-  moveDown,
-  moveLeft,
-  moveRight,
-  rotate,
-} = useBoard();
+const { boardState, activateOrDeactivatePart } = useBoard();
 
 const className = computed(() => `level-${level.value.toString()}`);
-
-const onKeyUp = event => {
-  if( !boardState.activePart ) {
-    return;
-  }
-
-  switch( event.key ) {
-    case "d":
-    case "ArrowRight":
-      moveRight();
-      break;
-    case "a":
-    case "ArrowLeft":
-      moveLeft();
-      break;
-    case "w":
-    case "ArrowUp":
-      moveUp();
-      break;
-    case "s":
-    case "ArrowDown":
-      moveDown();
-      break;
-    case " ":
-      rotate();
-      break;
-    case "Escape":
-      activateOrDeactivatePart( boardState.activePart.typeNumber );
-      break;
-    case "Enter":
-      break;
-    default:
-      break;
-  }
-}
-
-onMounted( () => {
-  document.addEventListener('keyup', onKeyUp );
-} );
-
-onUnmounted(() => {
-  document.removeEventListener('keyup', onKeyUp );
-});
-
 </script>
 
 <template>
@@ -78,31 +26,40 @@ onUnmounted(() => {
               boardState.activePart?.typeNumber === Math.abs(cell)
             "
             :solved="index === 1 && column[0] === 1 && column[0] + cell < 0"
-            @click="index === 0 ? activateOrDeactivatePart(column[0]) : activateOrDeactivatePart(Math.abs(cell))"
+            @click="
+              index === 0
+                ? activateOrDeactivatePart(column[0])
+                : activateOrDeactivatePart(Math.abs(cell))
+            "
           />
         </template>
       </div>
     </template>
   </div>
-  <div v-if="boardState.activePart" class="controls">
-    <button @click="rotate">Rotate</button>
-    <button @click="moveLeft">Left</button>
-    <button @click="moveUp">Top</button>
-    <button @click="moveDown">Bottom</button>
-    <button @click="moveRight">Right</button>
-  </div>
 </template>
 
 <style>
+:root {
+  --cell-size: 50px;
+  --icon-size: 30px;
+}
+
+@media screen and (min-width: 768px) {
+  :root {
+    --cell-size: 75px;
+    --icon-size: 50px;
+  }
+}
+
 .board {
   display: grid;
-  grid-template-columns: repeat(5, 50px);
-  grid-template-rows: repeat(5, 50px);
+  grid-template-columns: repeat(5, var(--cell-size));
+  grid-template-rows: repeat(5, var(--cell-size));
   width: fit-content;
 }
 
 .board .cell {
   position: relative;
-  font-size: 30px;
+  font-size: var(--icon-size);
 }
 </style>
