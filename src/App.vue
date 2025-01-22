@@ -18,7 +18,7 @@ const { level } = useLevel();
     </option>
   </select>
 
-  <Board />
+  <Board :level="level" />
 
-  <Controller />
+  <!-- <Controller /> -->
 </template>
