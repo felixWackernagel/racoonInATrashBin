@@ -1,26 +1,31 @@
 <script setup lang="ts">
+import type { Block } from "@/types";
 import { computed } from "vue";
 
 interface Props {
   row: number;
   column: number;
-  value: number;
-  movable: boolean;
-  underlyingCellValue: number | null;
-  active: boolean;
-  solved: boolean;
+  value: Block;
 }
 const props = defineProps<Props>();
 
-const conflict = computed(() => {
-  if (props.underlyingCellValue === null) {
+const solved = computed(() => {
+  if (props.value.conflictingBlock === null) {
     return false;
   }
+
+  return props.value.conflictingBlock.type === "r" && props.value.isTrashBin;
+});
+
+const conflict = computed(() => {
+  if (props.value.conflictingBlock === null) {
+    return false;
+  }
+
   return (
-    props.movable &&
-    !props.solved &&
-    Math.abs(props.underlyingCellValue) >= 1 &&
-    Math.abs(props.underlyingCellValue) !== Math.abs(props.value)
+    props.value.isActive &&
+    !solved &&
+    props.value.conflictingBlock.type !== props.value.type
   );
 });
 </script>
@@ -29,23 +34,24 @@ const conflict = computed(() => {
   <div
     :class="{
       block: true,
-      'block--racoon': value === 1,
-      'trash-bin': value < 0,
-      'block--empty': value === 0,
-      'block--a': Math.abs(value) === 2,
-      'block--b': Math.abs(value) === 3,
-      'block--c': Math.abs(value) === 4,
-      'block--d': Math.abs(value) === 5,
+      'block--racoon': value.type === 'r',
+      'trash-bin': value.isTrashBin,
+      'block--empty': value.type == 'e',
+      'block--a': value.type === 'a',
+      'block--b': value.type === 'b',
+      'block--c': value.type === 'c',
+      'block--d': value.type === 'd',
       'block--conflict': conflict,
-      'block--movable': movable,
-      'block--active': active,
+      'block--movable': value.isActive,
       'edge--top': row === 0,
       'edge--right': column === 4,
       'edge--bottom': row === 4,
       'edge--left': column === 0,
     }"
   >
-    {{ solved ? "🛢️" : value === 1 ? "🦝" : value < 0 ? "🛢️" : "" }}
+    {{
+      solved ? "🛢️" : value.type === "r" ? "🦝" : value.isTrashBin ? "🛢️" : ""
+    }}
   </div>
 </template>
 
@@ -82,22 +88,21 @@ const conflict = computed(() => {
   background-color: #f4ffc3;
 }
 
-.block--active {
-  background-color: transparent;
-  font-size: 0;
-  pointer-events: none;
-}
-
 .block--conflict {
   background-color: #eb5a3c;
   opacity: 0.5;
 }
 
+.block--a:has(~ .block--a:hover),
+.block--a:hover ~ .block--a,
+.block--b:has(~ .block--b:hover),
+.block--b:hover ~ .block--b,
+.block--c:has(~ .block--c:hover),
+.block--c:hover ~ .block--c,
+.block--d:has(~ .block--d:hover),
+.block--d:hover ~ .block--d,
+.block:not(.block--racoon):not(.block--empty):hover,
 .block--movable {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 10;
   box-shadow: inset 0 0 0 2px #ff9d23;
 }
 

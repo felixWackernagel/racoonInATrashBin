@@ -1,40 +1,15 @@
 import { levels } from "@/levels";
-import type { Level, ModelType, Part } from "@/types";
+import type { Block, Part } from "@/types";
 import { MODELS } from "@/types";
-import { ref, toValue, watch, watchEffect, type Ref } from "vue";
+import { ref, watch } from "vue";
+import { useBlocks } from "@/composables/useBlocks";
 
-interface ActivePart {
-  typeNumber: number;
-  part: Part;
-}
-
-interface State {
-  board: number[][][];
-  activePart?: ActivePart;
-  parts: Part[];
-}
-
-// const boardState: State = reactive({
-//   board: [
-//     [[0], [0], [0], [0], [0]],
-//     [[0], [0], [0], [0], [0]],
-//     [[0], [0], [0], [0], [0]],
-//     [[0], [0], [0], [0], [0]],
-//     [[0], [0], [0], [0], [0]],
-//   ],
-//   parts: [],
-// });
+const { emptyBlock, typedBlock } = useBlocks();
 
 export function useBoard(level: () => number) {
-  const board = ref([
-    [[0], [0], [0], [0], [0]],
-    [[0], [0], [0], [0], [0]],
-    [[0], [0], [0], [0], [0]],
-    [[0], [0], [0], [0], [0]],
-    [[0], [0], [0], [0], [0]],
-  ]);
+  const board = ref<Block[][]>([]);
   const parts = ref<Part[]>([]);
-  const activePart = ref<ActivePart | null>(null);
+  const activePart = ref<Part | null>(null);
 
   const positionToCoordinates = (cell: number): number[] => {
     let row = cell <= 5 ? 0 : (cell - (cell % 5)) / 5;
@@ -60,57 +35,67 @@ export function useBoard(level: () => number) {
     return coordinates;
   };
 
-  const typeToNumber = (type: ModelType): number => {
-    return Object.keys(MODELS).indexOf(type);
+  const emptyBoard = (): void => {
+    const array = [];
+    for (let row = 0; row < 5; row++) {
+      const rows: Block[] = [];
+      for (let column = 0; column < 5; column++) {
+        rows.push(emptyBlock());
+      }
+      array.push(rows);
+    }
+    board.value = array;
   };
 
-  const numberToType = (num: number): ModelType => {
-    return <"e" | "r" | "a" | "b" | "c" | "d">Object.keys(MODELS)[num];
-  };
-
-  const removeActivePartsFromBoard = () => {
-    board.value
-      .flat(1)
-      .filter((cell) => cell.length == 2)
-      .map((activeCell) => activeCell.pop());
-  };
-
-  const drawPart = (part: Part, cellIndex: number) => {
+  const drawPart = (part: Part, active: boolean) => {
     let model = MODELS[part.type];
     for (let rotation = 0; rotation < part.rotations; rotation++) {
       model = rotateClockwise(model);
     }
     let startCoordinates = positionToCoordinates(part.position);
     let modelCoordinates = modelToCoordinates(model);
-    let boardValue = typeToNumber(part.type);
+
     modelCoordinates.forEach(
       ([row, column, cell]: [number, number, number]) => {
         let x = row + startCoordinates[0];
         let y = column + startCoordinates[1];
         let isTrashBin = cell === 2;
-        board.value[x][y][cellIndex] = boardValue * (isTrashBin ? -1 : 1);
+        let underlyingBlock = board.value[x][y];
+        board.value[x][y] = typedBlock(
+          part.type,
+          isTrashBin,
+          active,
+          underlyingBlock.type === "e" ? null : underlyingBlock
+        );
       }
     );
   };
 
   const drawBoard = () => {
+    emptyBoard();
+
+    // draw racoons
+    parts.value
+      .filter((part) => part.type === "r")
+      .forEach((part) => drawPart(part, false));
+
+    // draw parts without active
     let active = activePart.value;
+    parts.value
+      .filter((part) => {
+        if (part.type === "r") return false;
 
-    let drawableParts: Part[] = active
-      ? parts.value.filter((part) => part.type != active.part.type)
-      : parts.value;
-    drawableParts.forEach((part) => drawPart(part, 0));
+        if (active) {
+          return part.type !== active.type;
+        }
 
+        return true;
+      })
+      .forEach((part) => drawPart(part, false));
+
+    // draw active part
     if (active) {
-      board.value
-        .flat(1)
-        .filter((part) => Math.abs(part[0]) === active.typeNumber)
-        .forEach((part) => (part[0] = 0));
-    }
-
-    removeActivePartsFromBoard();
-    if (active) {
-      drawPart(active.part, 1);
+      drawPart(active, true);
     }
   };
 
@@ -141,27 +126,28 @@ export function useBoard(level: () => number) {
     return rotated;
   };
 
-  const activateOrDeactivatePart = (cellNumber: number): void => {
-    const absoluteNumber = Math.abs(cellNumber);
-    if (absoluteNumber < 1) {
-      return;
-    }
+  const activateOrDeactivatePart = (block: Block | null): void => {
+    if (block) {
+      if (block.type === "r" || block.type === "e") {
+        return;
+      }
 
-    const modelType = numberToType(absoluteNumber);
-    const part = parts.value.filter((p) => p.type === modelType)[0];
-    const clone: Part = {
-      type: part.type,
-      rotations: part.rotations,
-      position: part.position,
-    };
-    if (
-      activePart.value === null ||
-      activePart.value.typeNumber !== absoluteNumber
-    ) {
-      activePart.value = {
-        part: clone,
-        typeNumber: absoluteNumber,
+      const part = parts.value.find((part) => part.type === block.type);
+      if (!part) {
+        return;
+      }
+
+      const clone: Part = {
+        type: part.type,
+        rotations: part.rotations,
+        position: part.position,
       };
+
+      if (activePart.value === null || activePart.value.type !== clone.type) {
+        activePart.value = clone;
+      } else {
+        activePart.value = null;
+      }
     } else {
       activePart.value = null;
     }
@@ -175,11 +161,11 @@ export function useBoard(level: () => number) {
       return;
     }
 
-    if (active.part.position <= 5) {
+    if (active.position <= 5) {
       return;
     }
 
-    active.part.position = active.part.position - 5;
+    active.position = active.position - 5;
 
     drawBoard();
   };
@@ -190,17 +176,17 @@ export function useBoard(level: () => number) {
       return;
     }
 
-    let model = MODELS[active.part.type];
-    for (let rotation = 0; rotation < active.part.rotations; rotation++) {
+    let model = MODELS[active.type];
+    for (let rotation = 0; rotation < active.rotations; rotation++) {
       model = rotateClockwise(model);
     }
     let modelHeight = model.length - 1;
 
-    if (active.part.position + modelHeight * 5 > 20) {
+    if (active.position + modelHeight * 5 > 20) {
       return;
     }
 
-    active.part.position = active.part.position + 5;
+    active.position = active.position + 5;
 
     drawBoard();
   };
@@ -211,11 +197,11 @@ export function useBoard(level: () => number) {
       return;
     }
 
-    if (active.part.position % 5 <= 1) {
+    if (active.position % 5 <= 1) {
       return;
     }
 
-    active.part.position = active.part.position - 1;
+    active.position = active.position - 1;
 
     drawBoard();
   };
@@ -226,17 +212,17 @@ export function useBoard(level: () => number) {
       return;
     }
 
-    let model = MODELS[active.part.type];
-    for (let rotation = 0; rotation < active.part.rotations; rotation++) {
+    let model = MODELS[active.type];
+    for (let rotation = 0; rotation < active.rotations; rotation++) {
       model = rotateClockwise(model);
     }
     let modelWidth = model[0].length - 1;
 
-    if ((active.part.position % 5) + modelWidth >= 5) {
+    if ((active.position % 5) + modelWidth >= 5) {
       return;
     }
 
-    active.part.position = active.part.position + 1;
+    active.position = active.position + 1;
 
     drawBoard();
   };
@@ -247,23 +233,23 @@ export function useBoard(level: () => number) {
       return;
     }
 
-    active.part.rotations = (active.part.rotations + 1) % 4;
-    let model = MODELS[active.part.type];
-    for (let rotation = 0; rotation < active.part.rotations; rotation++) {
+    active.rotations = (active.rotations + 1) % 4;
+    let model = MODELS[active.type];
+    for (let rotation = 0; rotation < active.rotations; rotation++) {
       model = rotateClockwise(model);
     }
     let modelHeight = model.length - 1;
     let modelWidth = model[0].length - 1;
-    let coordinates = positionToCoordinates(active.part.position);
+    let coordinates = positionToCoordinates(active.position);
 
     if (coordinates[0] + modelHeight > 4) {
       let diff = coordinates[0] + modelHeight - 4;
-      active.part.position = active.part.position - diff * 5;
+      active.position = active.position - diff * 5;
     }
 
     if (coordinates[1] + modelWidth > 4) {
       let diff = coordinates[1] + modelWidth - 4;
-      active.part.position = active.part.position - diff;
+      active.position = active.position - diff;
     }
 
     drawBoard();
@@ -275,33 +261,23 @@ export function useBoard(level: () => number) {
       return;
     }
 
-    const type = typeToNumber(active.part.type);
     const hasConflict = board.value
       .flat(1)
-      .filter((cell) => cell.length == 2)
-      .filter((cell) => Math.abs(cell[1]) === type)
-      .some((cell) => {
-        const below = cell[0];
-        const above = cell[1];
-        const belowIsNotEmpty = below != 0 && Math.abs(below) != type;
-        const isRacoonInTrashBin = below + above < 0;
-        return belowIsNotEmpty && !isRacoonInTrashBin;
+      .filter((block) => block.isActive && block.conflictingBlock != null)
+      .some((block) => {
+        const isRacoonInTrashBin =
+          block.isTrashBin && block.conflictingBlock?.type === "r";
+        return !isRacoonInTrashBin;
       });
     if (hasConflict) {
       return;
     }
 
-    board.value
-      .flat(1)
-      .filter((cell) => cell.length == 1)
-      .filter((cell) => Math.abs(cell[0]) === type)
-      .some((cell) => (cell[0] = 0));
-
     parts.value
-      .filter((part) => part.type === active.part.type)
+      .filter((part) => part.type === active.type)
       .forEach((part) => {
-        part.position = active.part.position;
-        part.rotations = active.part.rotations;
+        part.position = active.position;
+        part.rotations = active.rotations;
       });
 
     activePart.value = null;
@@ -318,13 +294,6 @@ export function useBoard(level: () => number) {
       const array = new Array();
       array.push(...levelData.parts);
       parts.value = array;
-
-      board.value.flat(1).forEach((column) => {
-        if (column.length === 2) {
-          column.pop();
-        }
-        column[0] = 0;
-      });
 
       activePart.value = null;
 
