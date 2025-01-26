@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, toRef, watch, type Ref } from "vue";
+import { computed } from "vue";
 import { useBoard } from "@/composables/useBoard";
 import Cell from "@/components/Cell.vue";
 import { onMounted, onUnmounted } from "vue";
@@ -20,6 +20,7 @@ const {
   moveRight,
   rotate,
   place,
+  nextPart,
 } = useBoard(() => props.level);
 
 const className = computed(() => `level-${props.level.toString()}`);
@@ -70,76 +71,96 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div :class="['board', className]">
-    <template v-for="(row, rowIndex) in board" :key="rowIndex">
-      <template v-for="(column, columnIndex) in row" :key="columnIndex">
-        <Cell
-          :row="rowIndex"
-          :column="columnIndex"
-          :value="column"
-          @click="activateOrDeactivatePart(column)"
-        />
+  <div class="display">
+    <div :class="['board', className]">
+      <template v-for="(row, rowIndex) in board" :key="rowIndex">
+        <template v-for="(column, columnIndex) in row" :key="columnIndex">
+          <Cell
+            :row="rowIndex"
+            :column="columnIndex"
+            :value="column"
+            @click="activateOrDeactivatePart(column)"
+          />
+        </template>
       </template>
-    </template>
+    </div>
+    <h1>Racoon in a trash bin</h1>
   </div>
-  <div v-if="activePart" class="controller">
-    <div class="controller--right">
+  <div class="controller">
+    <div class="controller__section">
       <div class="btn btn--center"></div>
-      <button class="btn btn--left" @click="moveLeft">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-        >
-          <path
-            fill="currentColor"
-            d="m8.165 11.63l6.63-6.43C15.21 4.799 16 5.042 16 5.57v12.86c0 .528-.79.771-1.205.37l-6.63-6.43a.499.499 0 0 1 0-.74Z"
-          />
-        </svg>
+      <button
+        class="btn btn--left"
+        @click="moveLeft"
+        :disabled="activePart == null"
+      >
+        A
       </button>
-      <button class="btn btn--top" @click="moveUp">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-        >
-          <path
-            fill="currentColor"
-            d="m12.37 8.165l6.43 6.63c.401.414.158 1.205-.37 1.205H5.57c-.528 0-.771-.79-.37-1.205l6.43-6.63a.499.499 0 0 1 .74 0Z"
-          />
-        </svg>
+      <button
+        class="btn btn--top"
+        @click="moveUp"
+        :disabled="activePart == null"
+      >
+        W
       </button>
-      <button class="btn btn--bottom" @click="moveDown">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-        >
-          <path
-            fill="currentColor"
-            d="m12.37 15.835l6.43-6.63C19.201 8.79 18.958 8 18.43 8H5.57c-.528 0-.771.79-.37 1.205l6.43 6.63c.213.22.527.22.74 0Z"
-          />
-        </svg>
+      <button
+        class="btn btn--bottom"
+        @click="moveDown"
+        :disabled="activePart == null"
+      >
+        S
       </button>
-      <button class="btn btn--right" @click="moveRight">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-        >
-          <path
-            fill="currentColor"
-            d="M15.835 11.63L9.205 5.2C8.79 4.799 8 5.042 8 5.57v12.86c0 .528.79.771 1.205.37l6.63-6.43a.498.498 0 0 0 0-.74Z"
-          />
-        </svg>
+      <button
+        class="btn btn--right"
+        @click="moveRight"
+        :disabled="activePart == null"
+      >
+        D
       </button>
     </div>
-    <div class="controller--left">
-      <button class="btn btn--top-right" @click="rotate">
+    <div class="controller__section">
+      <button class="btn" @click="nextPart">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+        >
+          <g
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="1.5"
+          >
+            <path d="M18 8H6m0 0l4.125-4M6 8l4.125 4" />
+            <path d="M6 16h12m0 0l-4.125-4M18 16l-4.125 4" opacity=".5" />
+          </g>
+        </svg>
+      </button>
+      <button
+        class="btn btn--top"
+        @click="activateOrDeactivatePart(null)"
+        :disabled="activePart == null"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 16 16"
+        >
+          <path
+            fill="currentColor"
+            d="M5.28 4.22a.75.75 0 0 0-1.06 1.06L6.94 8l-2.72 2.72a.75.75 0 1 0 1.06 1.06L8 9.06l2.72 2.72a.75.75 0 1 0 1.06-1.06L9.06 8l2.72-2.72a.75.75 0 0 0-1.06-1.06L8 6.94z"
+          />
+        </svg>
+        <span>ESC</span>
+      </button>
+      <button
+        class="btn btn--top-right"
+        @click="rotate"
+        :disabled="activePart == null"
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -151,8 +172,13 @@ onUnmounted(() => {
             d="M18.258 3.508a.75.75 0 0 1 .463.693v4.243a.75.75 0 0 1-.75.75h-4.243a.75.75 0 0 1-.53-1.28L14.8 6.31a7.25 7.25 0 1 0 4.393 5.783a.75.75 0 0 1 1.488-.187A8.75 8.75 0 1 1 15.93 5.18l1.51-1.51a.75.75 0 0 1 .817-.162Z"
           />
         </svg>
+        <span>SPACE</span>
       </button>
-      <button class="btn btn--bottom-left" @click="place">
+      <button
+        class="btn btn--bottom-left"
+        @click="place"
+        :disabled="activePart == null"
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -173,6 +199,7 @@ onUnmounted(() => {
             <path d="M12 3v13m0 0l4-4.375M12 16l-4-4.375" />
           </g>
         </svg>
+        <span>ENTER</span>
       </button>
     </div>
   </div>
@@ -184,11 +211,31 @@ onUnmounted(() => {
   --icon-size: 30px;
 }
 
-@media screen and (min-width: 768px) {
+/* @media screen and (min-width: 768px) {
   :root {
     --cell-size: 75px;
     --icon-size: 50px;
   }
+} */
+
+.display {
+  background-color: #595959;
+  border: 2px solid #000;
+  border-radius: 4px;
+  align-self: center;
+  padding: 20px 20px 10px 20px;
+  margin-top: 20px;
+}
+
+h1 {
+  margin: 0;
+  padding: 0;
+  color: #fff;
+  font-size: 18px;
+  text-align: center;
+  text-transform: uppercase;
+  padding-top: 10px;
+  font-family: monospace;
 }
 
 .board {
@@ -200,32 +247,31 @@ onUnmounted(() => {
 }
 
 .controller {
+  max-width: 294px;
+  align-self: center;
   display: grid;
-  grid-template-columns: repeat(2, 150px);
-  grid-template-rows: 150px;
-  gap: 50px;
+  grid-template-columns: repeat(2, 120px);
+  grid-template-rows: 120px;
+  gap: 54px;
+  padding-top: 20px;
 }
 
-.controller--left {
-  position: relative;
-}
-
-.controller--right {
+.controller__section {
   position: relative;
 }
 
 .btn {
   position: absolute;
-  background-color: #cccccc;
+  background-color: #bababa;
   border: none;
   margin: 0;
   border-radius: 4px;
-  width: 50px;
-  height: 50px;
+  min-width: 40px;
+  height: 40px;
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 1px solid #333;
+  border: 1px solid #000000;
   border-bottom: 4px solid #333;
 }
 
@@ -290,12 +336,13 @@ onUnmounted(() => {
 }
 
 .btn--top-right {
-  top: 0;
+  top: 50%;
   right: 0;
+  transform: translateY(-100%);
 }
 
 .btn--bottom-left {
-  bottom: 0;
+  top: 50%;
   left: 0;
 }
 </style>

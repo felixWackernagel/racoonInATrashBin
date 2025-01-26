@@ -126,6 +126,19 @@ export function useBoard(level: () => number) {
     return rotated;
   };
 
+  const activatePart = (part: Part): void => {
+    const clone: Part = {
+      type: part.type,
+      rotations: part.rotations,
+      position: part.position,
+    };
+    activePart.value = clone;
+  };
+
+  const deactivatePart = () => {
+    activePart.value = null;
+  };
+
   const activateOrDeactivatePart = (block: Block | null): void => {
     if (block) {
       if (block.type === "r" || block.type === "e") {
@@ -137,19 +150,13 @@ export function useBoard(level: () => number) {
         return;
       }
 
-      const clone: Part = {
-        type: part.type,
-        rotations: part.rotations,
-        position: part.position,
-      };
-
-      if (activePart.value === null || activePart.value.type !== clone.type) {
-        activePart.value = clone;
+      if (activePart.value === null || activePart.value.type !== part.type) {
+        activatePart(part);
       } else {
-        activePart.value = null;
+        deactivatePart();
       }
     } else {
-      activePart.value = null;
+      deactivatePart();
     }
 
     drawBoard();
@@ -285,6 +292,27 @@ export function useBoard(level: () => number) {
     drawBoard();
   };
 
+  const nextPart = () => {
+    let currentPart = activePart.value;
+    let nextPartType = "a";
+
+    if (currentPart != null) {
+      let modelKeys = Object.keys(MODELS);
+      let index = modelKeys.indexOf(currentPart.type);
+      let nextIndex = index + 1 >= modelKeys.length ? 2 : index + 1;
+      nextPartType = modelKeys[nextIndex];
+    }
+
+    const part = parts.value.find((part) => part.type === nextPartType);
+    if (!part) {
+      return;
+    }
+
+    activatePart(part);
+
+    drawBoard();
+  };
+
   watch(
     level,
     (newLevel) => {
@@ -313,5 +341,6 @@ export function useBoard(level: () => number) {
     moveRight,
     rotate,
     place,
+    nextPart,
   };
 }

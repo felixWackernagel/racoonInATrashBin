@@ -70,6 +70,7 @@ const conflict = computed(() => {
 .block--racoon,
 .block--empty {
   pointer-events: none;
+  background-color: #fff;
 }
 
 .block--a {

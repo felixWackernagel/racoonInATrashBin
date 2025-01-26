@@ -17,5 +17,25 @@ const { level } = useLevel();
     </option>
   </select>
 
-  <Board :level="level" />
+  <div class="game">
+    <Board :level="level" />
+  </div>
 </template>
+<style lang="css">
+select {
+  border-radius: 0;
+  border: none;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  font-size: 16px;
+  text-align: center;
+}
+
+.game {
+  background: linear-gradient(28deg, rgb(46 11 135), #4080cf);
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  border-top: 2px solid #000;
+}
+</style>
