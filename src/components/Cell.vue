@@ -24,7 +24,7 @@ const conflict = computed(() => {
 
   return (
     props.value.isActive &&
-    !solved &&
+    !solved.value &&
     props.value.conflictingBlock.type !== props.value.type
   );
 });
@@ -50,7 +50,7 @@ const conflict = computed(() => {
     }"
   >
     {{
-      solved ? "🛢️" : value.type === "r" ? "🦝" : value.isTrashBin ? "🛢️" : ""
+      solved ? "📦" : value.type === "r" ? "🦝" : value.isTrashBin ? "🪤" : ""
     }}
   </div>
 </template>
@@ -63,8 +63,16 @@ const conflict = computed(() => {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  border: 1px solid #3f3f3f;
   box-sizing: border-box;
+  position: relative;
+}
+
+.block::before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border: 2px solid var(--border-color);
 }
 
 .block--racoon,
@@ -104,10 +112,10 @@ const conflict = computed(() => {
 .block--d:hover ~ .block--d,
 .block:not(.block--racoon):not(.block--empty):hover,
 .block--movable {
-  box-shadow: inset 0 0 0 2px #ff9d23;
+  --border-color: #ff9d23;
 }
 
-.edge--left {
+/* .edge--left {
   border-left-width: 2px;
 }
 
@@ -121,5 +129,5 @@ const conflict = computed(() => {
 
 .edge--bottom {
   border-bottom-width: 2px;
-}
+} */
 </style>

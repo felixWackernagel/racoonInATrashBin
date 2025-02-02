@@ -27,7 +27,7 @@ const className = computed(() => `level-${props.level.toString()}`);
 
 const onKeyUp = (event: KeyboardEvent) => {
   if (!activePart.value) {
-    if( event.key === "ö" ) {
+    if (event.key === "ö") {
       nextPart();
     }
 
@@ -91,7 +91,7 @@ onUnmounted(() => {
         </template>
       </template>
     </div>
-    <h1>Racoon in a trash bin</h1>
+    <h1>It's a trap</h1>
   </div>
   <div class="controller">
     <div class="controller__section">
@@ -103,32 +103,72 @@ onUnmounted(() => {
       </div>
       <div class="btn btn--center"></div>
       <button
-          class="btn btn--left"
-          @click="moveLeft"
-          :disabled="activePart == null"
+        class="btn btn--left"
+        @click="moveLeft"
+        :disabled="activePart == null"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="m8.165 11.63l6.63-6.43C15.21 4.799 16 5.042 16 5.57v12.86c0 .528-.79.771-1.205.37l-6.63-6.43a.499.499 0 0 1 0-.74Z"/></svg>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+        >
+          <path
+            fill="currentColor"
+            d="m8.165 11.63l6.63-6.43C15.21 4.799 16 5.042 16 5.57v12.86c0 .528-.79.771-1.205.37l-6.63-6.43a.499.499 0 0 1 0-.74Z"
+          />
+        </svg>
       </button>
       <button
         class="btn btn--top"
         @click="moveUp"
         :disabled="activePart == null"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="m12.37 8.165l6.43 6.63c.401.414.158 1.205-.37 1.205H5.57c-.528 0-.771-.79-.37-1.205l6.43-6.63a.499.499 0 0 1 .74 0Z"/></svg>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+        >
+          <path
+            fill="currentColor"
+            d="m12.37 8.165l6.43 6.63c.401.414.158 1.205-.37 1.205H5.57c-.528 0-.771-.79-.37-1.205l6.43-6.63a.499.499 0 0 1 .74 0Z"
+          />
+        </svg>
       </button>
       <button
         class="btn btn--bottom"
         @click="moveDown"
         :disabled="activePart == null"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="m12.37 15.835l6.43-6.63C19.201 8.79 18.958 8 18.43 8H5.57c-.528 0-.771.79-.37 1.205l6.43 6.63c.213.22.527.22.74 0Z"/></svg>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+        >
+          <path
+            fill="currentColor"
+            d="m12.37 15.835l6.43-6.63C19.201 8.79 18.958 8 18.43 8H5.57c-.528 0-.771.79-.37 1.205l6.43 6.63c.213.22.527.22.74 0Z"
+          />
+        </svg>
       </button>
       <button
         class="btn btn--right"
         @click="moveRight"
         :disabled="activePart == null"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M15.835 11.63L9.205 5.2C8.79 4.799 8 5.042 8 5.57v12.86c0 .528.79.771 1.205.37l6.63-6.43a.498.498 0 0 0 0-.74Z"/></svg>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+        >
+          <path
+            fill="currentColor"
+            d="M15.835 11.63L9.205 5.2C8.79 4.799 8 5.042 8 5.57v12.86c0 .528.79.771 1.205.37l6.63-6.43a.498.498 0 0 0 0-.74Z"
+          />
+        </svg>
       </button>
     </div>
     <div class="controller__section">
@@ -183,17 +223,17 @@ onUnmounted(() => {
       </button>
       <button class="btn btn--bottom btn--round" @click="nextPart">
         <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
         >
           <g
-              fill="none"
-              stroke="currentColor"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="1.5"
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="1.5"
           >
             <path d="M18 8H6m0 0l4.125-4M6 8l4.125 4" />
             <path d="M6 16h12m0 0l-4.125-4M18 16l-4.125 4" opacity=".5" />
@@ -201,19 +241,19 @@ onUnmounted(() => {
         </svg>
       </button>
       <button
-          class="btn btn--top btn--round"
-          @click="activateOrDeactivatePart(null)"
-          :disabled="activePart == null"
+        class="btn btn--top btn--round"
+        @click="activateOrDeactivatePart(null)"
+        :disabled="activePart == null"
       >
         <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 16 16"
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 16 16"
         >
           <path
-              fill="currentColor"
-              d="M5.28 4.22a.75.75 0 0 0-1.06 1.06L6.94 8l-2.72 2.72a.75.75 0 1 0 1.06 1.06L8 9.06l2.72 2.72a.75.75 0 1 0 1.06-1.06L9.06 8l2.72-2.72a.75.75 0 0 0-1.06-1.06L8 6.94z"
+            fill="currentColor"
+            d="M5.28 4.22a.75.75 0 0 0-1.06 1.06L6.94 8l-2.72 2.72a.75.75 0 1 0 1.06 1.06L8 9.06l2.72 2.72a.75.75 0 1 0 1.06-1.06L9.06 8l2.72-2.72a.75.75 0 0 0-1.06-1.06L8 6.94z"
           />
         </svg>
       </button>
@@ -225,6 +265,7 @@ onUnmounted(() => {
 :root {
   --cell-size: 50px;
   --icon-size: 30px;
+  --border-color: transparent;
 }
 
 /* @media screen and (min-width: 768px) {
@@ -259,6 +300,9 @@ h1 {
   grid-template-rows: repeat(5, var(--cell-size));
   width: fit-content;
   font-size: var(--icon-size);
+  padding: 2px;
+  gap: 2px;
+  background-color: #3f3f3f;
 }
 
 .controller {
@@ -384,7 +428,7 @@ h1 {
   position: absolute;
   top: 50%;
   right: 0;
-  transform: translateY( -50% );
+  transform: translateY(-50%);
 }
 
 .position--bottom {
