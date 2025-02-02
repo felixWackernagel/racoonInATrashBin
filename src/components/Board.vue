@@ -27,6 +27,10 @@ const className = computed(() => `level-${props.level.toString()}`);
 
 const onKeyUp = (event: KeyboardEvent) => {
   if (!activePart.value) {
+    if( event.key === "ö" ) {
+      nextPart();
+    }
+
     return;
   }
 
@@ -47,14 +51,17 @@ const onKeyUp = (event: KeyboardEvent) => {
     case "ArrowDown":
       moveDown();
       break;
-    case " ":
+    case "ä":
       rotate();
       break;
-    case "Escape":
+    case "p":
       activateOrDeactivatePart(null);
       break;
-    case "Enter":
+    case "l":
       place();
+      break;
+    case "ö":
+      nextPart();
       break;
     default:
       break;
@@ -88,6 +95,12 @@ onUnmounted(() => {
   </div>
   <div class="controller">
     <div class="controller__section">
+      <div class="legend">
+        <span class="key position--top">W</span>
+        <span class="key position--right">D</span>
+        <span class="key position--bottom">S</span>
+        <span class="key position--left">A</span>
+      </div>
       <div class="btn btn--center"></div>
       <button
           class="btn btn--left"
@@ -119,6 +132,12 @@ onUnmounted(() => {
       </button>
     </div>
     <div class="controller__section">
+      <div class="legend">
+        <span class="key position--top">P</span>
+        <span class="key position--right">Ä</span>
+        <span class="key position--bottom">Ö</span>
+        <span class="key position--left">L</span>
+      </div>
       <button
         class="btn btn--right btn--round"
         @click="rotate"
@@ -199,12 +218,6 @@ onUnmounted(() => {
         </svg>
       </button>
     </div>
-    <div class="legend">
-      <span class="position--top">W</span>
-      <span class="position--right">D</span>
-      <span class="position--bottom">S</span>
-      <span class="position--left">A</span>
-    </div>
   </div>
 </template>
 
@@ -255,7 +268,7 @@ h1 {
   grid-template-columns: repeat(2, 120px);
   grid-template-rows: 120px;
   gap: 54px;
-  padding-top: 20px;
+  margin-top: 40px;
 }
 
 .controller__section {
@@ -349,6 +362,7 @@ h1 {
   top: -20px;
   left: -20px;
   right: -20px;
+  border-radius: 50%;
 }
 
 .legend > span {
@@ -360,18 +374,37 @@ h1 {
 }
 
 .position--top {
-
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .position--right {
-
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY( -50% );
 }
 
 .position--bottom {
-
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .position--left {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+}
 
+.key {
+  font-size: 16px;
+  font-weight: bold;
+  font-family: monospace;
+  color: rgba(255, 255, 255, 0.5);
 }
 </style>

@@ -79,7 +79,7 @@ export function useBoard(level: () => number) {
       .filter((part) => part.type === "r")
       .forEach((part) => drawPart(part, false));
 
-    // draw parts without active
+    // draw parts without active one
     let active = activePart.value;
     parts.value
       .filter((part) => {
