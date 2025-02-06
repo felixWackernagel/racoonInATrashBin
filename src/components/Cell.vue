@@ -36,7 +36,7 @@ const conflict = computed(() => {
       block: true,
       'block--racoon': value.type === 'r',
       'trash-bin': value.isTrashBin,
-      'block--empty': value.type == 'e',
+      'block--empty': value.type === 'e',
       'block--a': value.type === 'a',
       'block--b': value.type === 'b',
       'block--c': value.type === 'c',
@@ -50,7 +50,15 @@ const conflict = computed(() => {
     }"
   >
     {{
-      solved ? "📦" : value.type === "r" ? "🦝" : value.isTrashBin ? "🪤" : ""
+      solved
+          ? "📦"
+          : value.type === "r"
+              ? "🦝"
+              : value.isTrashBin
+                  ? "🪤"
+                  : conflict
+                    ? "❌"
+                    : ""
     }}
   </div>
 </template>
@@ -82,7 +90,7 @@ const conflict = computed(() => {
 }
 
 .block--a {
-  background-color: #5d8736;
+  background-color: #578FCA;
 }
 
 .block--b {
@@ -90,16 +98,16 @@ const conflict = computed(() => {
 }
 
 .block--c {
-  background-color: #a9c46c;
+  background-color: #D2665A;
 }
 
 .block--d {
-  background-color: #f4ffc3;
+  background-color: #8174A0;
 }
 
 .block--conflict {
-  background-color: #eb5a3c;
-  opacity: 0.5;
+  /*background-color: #eb5a3c;*/
+  /*opacity: 0.5;*/
 }
 
 .block--a:has(~ .block--a:hover),
@@ -112,7 +120,7 @@ const conflict = computed(() => {
 .block--d:hover ~ .block--d,
 .block:not(.block--racoon):not(.block--empty):hover,
 .block--movable {
-  --border-color: #ff9d23;
+  --border-color: #FADA7A;
 }
 
 /* .edge--left {

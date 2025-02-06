@@ -21,6 +21,7 @@ const {
   rotate,
   place,
   nextPart,
+  levelSolved
 } = useBoard(() => props.level);
 
 const className = computed(() => `level-${props.level.toString()}`);
@@ -79,7 +80,10 @@ onUnmounted(() => {
 
 <template>
   <div class="display">
-    <div :class="['board', className]">
+    <div v-if="levelSolved">
+      Geschafft
+    </div>
+    <div v-else :class="['board', className]">
       <template v-for="(row, rowIndex) in board" :key="rowIndex">
         <template v-for="(column, columnIndex) in row" :key="columnIndex">
           <Cell

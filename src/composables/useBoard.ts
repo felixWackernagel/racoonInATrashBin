@@ -10,6 +10,7 @@ export function useBoard(level: () => number) {
   const board = ref<Block[][]>([]);
   const parts = ref<Part[]>([]);
   const activePart = ref<Part | null>(null);
+  const levelSolved = ref<Boolean>(false);
 
   const positionToCoordinates = (cell: number): number[] => {
     let row = cell <= 5 ? 0 : (cell - (cell % 5)) / 5;
@@ -97,6 +98,8 @@ export function useBoard(level: () => number) {
     if (active) {
       drawPart(active, true);
     }
+
+    updateLevelSolved();
   };
 
   /**
@@ -313,13 +316,25 @@ export function useBoard(level: () => number) {
     drawBoard();
   };
 
+  const updateLevelSolved = () => {
+    let conflictingBlocks = board.value
+        .flat(1)
+        .filter((block) => block.conflictingBlock != null );
+
+    if( conflictingBlocks.length < 5 ) {
+      levelSolved.value = false;
+    } else {
+      levelSolved.value = conflictingBlocks.every((block) => block.isTrashBin && block.conflictingBlock?.type === "r");
+    }
+  }
+
   watch(
     level,
     (newLevel) => {
       // clear board for new level
       const levelData = levels[newLevel - 1];
 
-      const array = new Array();
+      const array = [];
       array.push(...levelData.parts);
       parts.value = array;
 
@@ -342,5 +357,6 @@ export function useBoard(level: () => number) {
     rotate,
     place,
     nextPart,
+    levelSolved,
   };
 }
