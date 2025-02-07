@@ -51,14 +51,14 @@ const conflict = computed(() => {
   >
     {{
       solved
-          ? "📦"
-          : value.type === "r"
-              ? "🦝"
-              : value.isTrashBin
-                  ? "🪤"
-                  : conflict
-                    ? "❌"
-                    : ""
+        ? "📦"
+        : value.type === "r"
+          ? "🦝"
+          : value.isTrashBin
+            ? "🪤"
+            : conflict
+              ? "❌"
+              : ""
     }}
   </div>
 </template>
@@ -73,6 +73,7 @@ const conflict = computed(() => {
   cursor: pointer;
   box-sizing: border-box;
   position: relative;
+  box-shadow: inset 0 0 10px 0px rgba(255, 255, 255, 0.4);
 }
 
 .block::before {
@@ -90,7 +91,7 @@ const conflict = computed(() => {
 }
 
 .block--a {
-  background-color: #578FCA;
+  background-color: #578fca;
 }
 
 .block--b {
@@ -98,11 +99,11 @@ const conflict = computed(() => {
 }
 
 .block--c {
-  background-color: #D2665A;
+  background-color: #d2665a;
 }
 
 .block--d {
-  background-color: #8174A0;
+  background-color: #8174a0;
 }
 
 .block--conflict {
@@ -120,7 +121,7 @@ const conflict = computed(() => {
 .block--d:hover ~ .block--d,
 .block:not(.block--racoon):not(.block--empty):hover,
 .block--movable {
-  --border-color: #FADA7A;
+  --border-color: #fada7a;
 }
 
 /* .edge--left {

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, defineProps } from "vue";
 import { useBoard } from "@/composables/useBoard";
+import { useLevel } from "@/composables/useLevel";
 import Cell from "@/components/Cell.vue";
 import { onMounted, onUnmounted } from "vue";
 
@@ -21,14 +22,16 @@ const {
   rotate,
   place,
   nextPart,
-  levelSolved
+  levelSolved,
 } = useBoard(() => props.level);
+
+const { level, nextLevel } = useLevel();
 
 const className = computed(() => `level-${props.level.toString()}`);
 
 const onKeyUp = (event: KeyboardEvent) => {
   if (!activePart.value) {
-    if (event.key === "ö") {
+    if (event.key === "ö" && !levelSolved.value) {
       nextPart();
     }
 
@@ -80,8 +83,25 @@ onUnmounted(() => {
 
 <template>
   <div class="display">
-    <div v-if="levelSolved">
-      Geschafft
+    <div v-if="levelSolved" class="level-solved">
+      <p>🦝 💚 🍎</p>
+      <p>Geschafft</p>
+      <button type="button" v-if="level <= 50" @click="nextLevel">
+        Weiter
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 20 20"
+        >
+          <path
+            fill="currentColor"
+            fill-rule="evenodd"
+            d="M3 10a.75.75 0 0 1 .75-.75h10.638L10.23 5.29a.75.75 0 1 1 1.04-1.08l5.5 5.25a.75.75 0 0 1 0 1.08l-5.5 5.25a.75.75 0 1 1-1.04-1.08l4.158-3.96H3.75A.75.75 0 0 1 3 10Z"
+            clip-rule="evenodd"
+          />
+        </svg>
+      </button>
     </div>
     <div v-else :class="['board', className]">
       <template v-for="(row, rowIndex) in board" :key="rowIndex">
@@ -225,7 +245,11 @@ onUnmounted(() => {
           </g>
         </svg>
       </button>
-      <button class="btn btn--bottom btn--round" @click="nextPart">
+      <button
+        class="btn btn--bottom btn--round"
+        @click="nextPart"
+        :disabled="levelSolved"
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -286,6 +310,41 @@ onUnmounted(() => {
   align-self: center;
   padding: 20px 20px 10px 20px;
   margin-top: 20px;
+}
+
+.level-solved {
+  width: calc(5 * var(--cell-size) + 8px);
+  height: calc(5 * var(--cell-size) + 8px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #3f3f3f;
+  background-color: #ffffff;
+
+  font-size: 18px;
+  font-family: monospace;
+}
+
+.level-solved button {
+  cursor: pointer;
+  text-transform: capitalize;
+  font-size: 16px;
+  padding: 6px 12px;
+  border-radius: 4px;
+  border: 1px solid #000000;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.level-solved p {
+  margin: 0 0 16px 0;
+}
+
+.level-solved p:first-child {
+  font-size: var(--icon-size);
 }
 
 h1 {

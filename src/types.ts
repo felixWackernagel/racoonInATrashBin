@@ -36,6 +36,7 @@ export interface Part {
 export interface Level {
   difficulty: string;
   parts: Part[];
+  turns: number;
 }
 
 export interface Block {

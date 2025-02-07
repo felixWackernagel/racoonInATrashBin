@@ -3,6 +3,7 @@ import type { Level } from "@/types";
 export const levels: Level[] = [
   {
     difficulty: "Starter",
+    turns: 4,
     parts: [
       {
         type: "r",
@@ -49,10 +50,11 @@ export const levels: Level[] = [
         rotations: 0,
         position: 1,
       },
-    ]
+    ],
   },
   {
     difficulty: "Starter",
+    turns: 4,
     parts: [
       {
         type: "r",
@@ -99,6 +101,6 @@ export const levels: Level[] = [
         rotations: 3,
         position: 8,
       },
-    ]
+    ],
   },
 ];
