@@ -3,6 +3,9 @@ import Board from "@/components/Board.vue";
 import { useLevel } from "@/composables/useLevel";
 
 const { level } = useLevel();
+const mql: MediaQueryList = window.matchMedia('(hover: none)');
+const isTouchScreen = mql.matches;
+
 </script>
 
 <template>
@@ -17,11 +20,16 @@ const { level } = useLevel();
     </option>
   </select>
 
-  <div class="game">
+  <div :class="{
+    game: true,
+    'game--touch': isTouchScreen,
+  }">
     <Board :level="level" />
   </div>
 </template>
-<style lang="css">
+<style lang="scss">
+$black: #000;
+
 select {
   border-radius: 0;
   border: none;
@@ -32,10 +40,10 @@ select {
 }
 
 .game {
-  background: linear-gradient(28deg, rgb(46 11 135), #4080cf);
+  background: linear-gradient(28deg, #2e0b87, #4080cf);
   display: flex;
   flex-direction: column;
   flex: 1;
-  border-top: 2px solid #000;
+  border-top: 2px solid $black;
 }
 </style>

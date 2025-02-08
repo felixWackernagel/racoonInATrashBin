@@ -28,6 +28,7 @@ const conflict = computed(() => {
     props.value.conflictingBlock.type !== props.value.type
   );
 });
+
 </script>
 
 <template>
@@ -41,12 +42,7 @@ const conflict = computed(() => {
       'block--b': value.type === 'b',
       'block--c': value.type === 'c',
       'block--d': value.type === 'd',
-      'block--conflict': conflict,
       'block--movable': value.isActive,
-      'edge--top': row === 0,
-      'edge--right': column === 4,
-      'edge--bottom': row === 4,
-      'edge--left': column === 0,
     }"
   >
     {{
@@ -73,7 +69,7 @@ const conflict = computed(() => {
   cursor: pointer;
   box-sizing: border-box;
   position: relative;
-  box-shadow: inset 0 0 10px 0px rgba(255, 255, 255, 0.4);
+  box-shadow: inset 0 0 10px 0 rgba(255, 255, 255, 0.4);
 }
 
 .block::before {
@@ -106,11 +102,6 @@ const conflict = computed(() => {
   background-color: #8174a0;
 }
 
-.block--conflict {
-  /*background-color: #eb5a3c;*/
-  /*opacity: 0.5;*/
-}
-
 .block--a:has(~ .block--a:hover),
 .block--a:hover ~ .block--a,
 .block--b:has(~ .block--b:hover),
@@ -124,19 +115,4 @@ const conflict = computed(() => {
   --border-color: #fada7a;
 }
 
-/* .edge--left {
-  border-left-width: 2px;
-}
-
-.edge--right {
-  border-right-width: 2px;
-}
-
-.edge--top {
-  border-top-width: 2px;
-}
-
-.edge--bottom {
-  border-bottom-width: 2px;
-} */
 </style>

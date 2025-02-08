@@ -25,7 +25,7 @@ const {
   levelSolved,
 } = useBoard(() => props.level);
 
-const { level, nextLevel } = useLevel();
+const { nextLevel } = useLevel();
 
 const className = computed(() => `level-${props.level.toString()}`);
 
@@ -513,5 +513,9 @@ h1 {
   font-weight: bold;
   font-family: monospace;
   color: rgba(255, 255, 255, 0.5);
+}
+
+.game--touch .key {
+  display: none;
 }
 </style>
