@@ -29,6 +29,13 @@ const conflict = computed(() => {
   );
 });
 
+const symbol = computed(() => {
+  if (solved.value) return "📦";
+  if (props.value.type === "r") return "🦝";
+  if (props.value.isTrashBin) return "🪤";
+  if (conflict.value) return "❌";
+  return "";
+});
 </script>
 
 <template>
@@ -45,61 +52,51 @@ const conflict = computed(() => {
       'block--movable': value.isActive,
     }"
   >
-    {{
-      solved
-        ? "📦"
-        : value.type === "r"
-          ? "🦝"
-          : value.isTrashBin
-            ? "🪤"
-            : conflict
-              ? "❌"
-              : ""
-    }}
+    {{ symbol }}
   </div>
 </template>
 
-<style>
+<style lang="scss">
 .block {
-  display: flex;
+  cursor: pointer;
   width: 100%;
   height: 100%;
+  display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
   box-sizing: border-box;
   position: relative;
-  box-shadow: inset 0 0 10px 0 rgba(255, 255, 255, 0.4);
-}
+  box-shadow: inset 0 0 10px 0 $colorBlockScrim;
 
-.block::before {
-  content: "";
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  border: 2px solid var(--border-color);
+  &::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 2px solid var(--border-color);
+  }
 }
 
 .block--racoon,
 .block--empty {
   pointer-events: none;
-  background-color: #fff;
+  background-color: $colorNonBlock;
 }
 
 .block--a {
-  background-color: #578fca;
+  background-color: $colorBlockA;
 }
 
 .block--b {
-  background-color: #809d3c;
+  background-color: $colorBlockB;
 }
 
 .block--c {
-  background-color: #d2665a;
+  background-color: $colorBlockC;
 }
 
 .block--d {
-  background-color: #8174a0;
+  background-color: $colorBlockD;
 }
 
 .block--a:has(~ .block--a:hover),
@@ -112,7 +109,6 @@ const conflict = computed(() => {
 .block--d:hover ~ .block--d,
 .block:not(.block--racoon):not(.block--empty):hover,
 .block--movable {
-  --border-color: #fada7a;
+  --border-color: #{$colorBlockBorder};
 }
-
 </style>

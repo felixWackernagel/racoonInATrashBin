@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import Board from "@/components/Board.vue";
 import { useLevel } from "@/composables/useLevel";
+import { levels } from "./levels";
 
 const { level } = useLevel();
-const mql: MediaQueryList = window.matchMedia('(hover: none)');
-const isTouchScreen = mql.matches;
-
+const levelCount = levels.length;
+const hasTouchScreenSupport = window.matchMedia("(hover: none)").matches;
 </script>
 
 <template>
@@ -15,21 +15,21 @@ const isTouchScreen = mql.matches;
     id="level-select"
     class="level-select"
   >
-    <option v-for="lv in 50" :value="lv" :key="lv" :disabled="lv > 2">
+    <option v-for="lv in levelCount" :value="lv" :key="lv">
       Level {{ lv.toString() }}
     </option>
   </select>
 
-  <div :class="{
-    game: true,
-    'game--touch': isTouchScreen,
-  }">
+  <div
+    :class="{
+      game: true,
+      'game--touch': hasTouchScreenSupport,
+    }"
+  >
     <Board :level="level" />
   </div>
 </template>
 <style lang="scss">
-$black: #000;
-
 select {
   border-radius: 0;
   border: none;
@@ -40,10 +40,10 @@ select {
 }
 
 .game {
-  background: linear-gradient(28deg, #2e0b87, #4080cf);
+  background: $gradientBackground;
   display: flex;
   flex-direction: column;
   flex: 1;
-  border-top: 2px solid $black;
+  border-top: 2px solid #000000;
 }
 </style>

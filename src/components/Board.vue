@@ -4,6 +4,7 @@ import { useBoard } from "@/composables/useBoard";
 import { useLevel } from "@/composables/useLevel";
 import Cell from "@/components/Cell.vue";
 import { onMounted, onUnmounted } from "vue";
+import { levels } from "@/levels";
 
 interface Props {
   level: number;
@@ -27,6 +28,7 @@ const {
 
 const { nextLevel } = useLevel();
 
+const levelCount = levels.length;
 const className = computed(() => `level-${props.level.toString()}`);
 
 const onKeyUp = (event: KeyboardEvent) => {
@@ -40,19 +42,15 @@ const onKeyUp = (event: KeyboardEvent) => {
 
   switch (event.key) {
     case "d":
-    case "ArrowRight":
       moveRight();
       break;
     case "a":
-    case "ArrowLeft":
       moveLeft();
       break;
     case "w":
-    case "ArrowUp":
       moveUp();
       break;
     case "s":
-    case "ArrowDown":
       moveDown();
       break;
     case "ä":
@@ -66,8 +64,6 @@ const onKeyUp = (event: KeyboardEvent) => {
       break;
     case "ö":
       nextPart();
-      break;
-    default:
       break;
   }
 };
@@ -86,7 +82,7 @@ onUnmounted(() => {
     <div v-if="levelSolved" class="level-solved">
       <p>🦝 💚 🍎</p>
       <p>Geschafft</p>
-      <button type="button" v-if="level <= 50" @click="nextLevel">
+      <button type="button" v-if="level < levelCount" @click="nextLevel">
         Weiter
         <svg
           xmlns="http://www.w3.org/2000/svg"
