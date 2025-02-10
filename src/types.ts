@@ -37,6 +37,7 @@ export interface Level {
   difficulty: string;
   parts: Part[];
   turns: number;
+  collectable: string;
 }
 
 export interface Block {
@@ -45,3 +46,14 @@ export interface Block {
   isActive: boolean;
   conflictingBlock: Block | null;
 }
+
+export type Icon =
+  | "arrow-right"
+  | "triangle-left"
+  | "triangle-up"
+  | "triangle-down"
+  | "triangle-right"
+  | "arrow-circle"
+  | "arrow-in"
+  | "arrow-exchange"
+  | "delete";

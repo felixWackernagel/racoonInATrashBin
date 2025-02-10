@@ -66,14 +66,14 @@ const symbol = computed(() => {
   justify-content: center;
   box-sizing: border-box;
   position: relative;
-  box-shadow: inset 0 0 10px 0 $colorBlockScrim;
+  box-shadow: inset 0 0 4px 0 $colorBlockScrim;
 
   &::before {
     content: "";
     position: absolute;
     width: 100%;
     height: 100%;
-    border: 2px solid var(--border-color);
+    border: $sizeBlockBorder solid var(--border-color);
   }
 }
 
@@ -109,6 +109,6 @@ const symbol = computed(() => {
 .block--d:hover ~ .block--d,
 .block:not(.block--racoon):not(.block--empty):hover,
 .block--movable {
-  --border-color: #{$colorBlockBorder};
+  --border-color: #{$colorBlockBorderActive};
 }
 </style>

@@ -4,6 +4,7 @@ export const levels: Level[] = [
   {
     difficulty: "Starter",
     turns: 4,
+    collectable: "🍎",
     parts: [
       {
         type: "r",
@@ -55,6 +56,7 @@ export const levels: Level[] = [
   {
     difficulty: "Starter",
     turns: 4,
+    collectable: "🍐",
     parts: [
       {
         type: "r",
