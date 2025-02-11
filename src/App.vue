@@ -9,12 +9,7 @@ const hasTouchScreenSupport = window.matchMedia("(hover: none)").matches;
 </script>
 
 <template>
-  <select
-    v-model="level"
-    name="level-select"
-    id="level-select"
-    class="level-select"
-  >
+  <select v-model="level" name="level-select">
     <option v-for="lv in levelCount" :value="lv" :key="lv">
       Level {{ lv.toString() }} ({{ levelData.difficulty }} -
       {{ levelData.turns }})
@@ -30,6 +25,7 @@ const hasTouchScreenSupport = window.matchMedia("(hover: none)").matches;
     <Board :level="level" />
   </div>
 </template>
+
 <style lang="scss">
 select {
   border-radius: 0;
