@@ -57,3 +57,6 @@ export type Icon =
   | "arrow-in"
   | "arrow-exchange"
   | "delete";
+
+//TODO better name
+export type RowColCell = [number, number, number];
