@@ -13,20 +13,20 @@ export function useBoard(level: () => number) {
   const levelSolved = ref<boolean>(false);
 
   const positionToCoordinates = (cell: number): number[] => {
-    let row = cell <= 5 ? 0 : (cell - (cell % 5)) / 5;
-    let column = (cell <= 5 ? cell : cell % 5) - 1;
+    const row = cell <= 5 ? 0 : (cell - (cell % 5)) / 5;
+    const column = (cell <= 5 ? cell : cell % 5) - 1;
     return [row, column];
   };
 
   const modelToCoordinates = (shape: number[][]): number[][] => {
-    let coordinates = [];
+    const coordinates = [];
 
-    let rows = shape.length;
-    let columns = shape[0].length;
+    const rows = shape.length;
+    const columns = shape[0].length;
 
     for (let row = 0; row < rows; row++) {
       for (let column = 0; column < columns; column++) {
-        let cell = shape[row][column];
+        const cell = shape[row][column];
         if (cell > 0) {
           coordinates.push([row, column, cell]);
         }
@@ -53,15 +53,15 @@ export function useBoard(level: () => number) {
     for (let rotation = 0; rotation < part.rotations; rotation++) {
       model = rotateClockwise(model);
     }
-    let startCoordinates = positionToCoordinates(part.position);
-    let modelCoordinates = modelToCoordinates(model);
+    const startCoordinates = positionToCoordinates(part.position);
+    const modelCoordinates = modelToCoordinates(model);
 
     modelCoordinates.forEach(
       ([row, column, cell]: [number, number, number]) => {
-        let x = row + startCoordinates[0];
-        let y = column + startCoordinates[1];
-        let isTrashBin = cell === 2;
-        let underlyingBlock = board.value[x][y];
+        const x = row + startCoordinates[0];
+        const y = column + startCoordinates[1];
+        const isTrashBin = cell === 2;
+        const underlyingBlock = board.value[x][y];
         board.value[x][y] = typedBlock(
           part.type,
           isTrashBin,
@@ -81,7 +81,7 @@ export function useBoard(level: () => number) {
       .forEach((part) => drawPart(part, false));
 
     // draw parts without active one
-    let active = activePart.value;
+    const active = activePart.value;
     parts.value
       .filter((part) => {
         if (part.type === "r") return false;
@@ -185,7 +185,7 @@ export function useBoard(level: () => number) {
     for (let rotation = 0; rotation < active.rotations; rotation++) {
       model = rotateClockwise(model);
     }
-    let modelHeight = model.length - 1;
+    const modelHeight = model.length - 1;
 
     if (active.position + modelHeight * 5 > 20) {
       return;
@@ -221,7 +221,7 @@ export function useBoard(level: () => number) {
     for (let rotation = 0; rotation < active.rotations; rotation++) {
       model = rotateClockwise(model);
     }
-    let modelWidth = model[0].length - 1;
+    const modelWidth = model[0].length - 1;
 
     if ((active.position % 5) + modelWidth >= 5) {
       return;
@@ -243,17 +243,17 @@ export function useBoard(level: () => number) {
     for (let rotation = 0; rotation < active.rotations; rotation++) {
       model = rotateClockwise(model);
     }
-    let modelHeight = model.length - 1;
-    let modelWidth = model[0].length - 1;
-    let coordinates = positionToCoordinates(active.position);
+    const modelHeight = model.length - 1;
+    const modelWidth = model[0].length - 1;
+    const coordinates = positionToCoordinates(active.position);
 
     if (coordinates[0] + modelHeight > 4) {
-      let diff = coordinates[0] + modelHeight - 4;
+      const diff = coordinates[0] + modelHeight - 4;
       active.position = active.position - diff * 5;
     }
 
     if (coordinates[1] + modelWidth > 4) {
-      let diff = coordinates[1] + modelWidth - 4;
+      const diff = coordinates[1] + modelWidth - 4;
       active.position = active.position - diff;
     }
 
@@ -291,13 +291,13 @@ export function useBoard(level: () => number) {
   };
 
   const nextPart = () => {
-    let currentPart = activePart.value;
+    const currentPart = activePart.value;
     let nextPartType = "a";
 
     if (currentPart != null) {
-      let modelKeys = Object.keys(MODELS);
-      let index = modelKeys.indexOf(currentPart.type);
-      let nextIndex = index + 1 >= modelKeys.length ? 2 : index + 1;
+      const modelKeys = Object.keys(MODELS);
+      const index = modelKeys.indexOf(currentPart.type);
+      const nextIndex = index + 1 >= modelKeys.length ? 2 : index + 1;
       nextPartType = modelKeys[nextIndex];
     }
 
@@ -317,7 +317,7 @@ export function useBoard(level: () => number) {
       return;
     }
 
-    let conflictingBlocks = board.value
+    const conflictingBlocks = board.value
       .flat(1)
       .filter((block) => block.conflictingBlock != null);
 
