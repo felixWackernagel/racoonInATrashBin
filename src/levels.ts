@@ -2,6 +2,12 @@ import type { Level } from "@/types";
 
 export const levels: Level[] = [
   {
+    difficulty: "",
+    turns: 0,
+    collectable: "",
+    parts: [],
+  },
+  {
     difficulty: "Starter",
     turns: 4,
     collectable: "🍎",

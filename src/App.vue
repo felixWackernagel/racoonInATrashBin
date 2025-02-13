@@ -3,25 +3,22 @@ import Board from "@/components/Board.vue";
 import { useLevel } from "@/composables/useLevel";
 import { levels } from "./levels";
 
-const { level, levelData } = useLevel();
-const levelCount = levels.length;
-const hasTouchScreenSupport = window.matchMedia("(hover: none)").matches;
+const { level } = useLevel();
+
+// the first level in levels means "the game is off"
+const levelCount = levels.length - 1;
 </script>
 
 <template>
   <select v-model="level" name="level-select">
+    <option value="0" disabled>Select a Level</option>
     <option v-for="lv in levelCount" :value="lv" :key="lv">
-      Level {{ lv.toString() }} ({{ levelData.difficulty }} -
-      {{ levelData.turns }})
+      Level {{ lv.toString() }} ({{ levels[lv].difficulty }} -
+      {{ levels[lv].turns }})
     </option>
   </select>
 
-  <div
-    :class="{
-      game: true,
-      'game--touch': hasTouchScreenSupport,
-    }"
-  >
+  <div class="game">
     <Board :level="level" />
   </div>
 </template>

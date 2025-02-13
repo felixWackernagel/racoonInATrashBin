@@ -27,10 +27,11 @@ const {
   levelSolved,
 } = useBoard(() => props.level);
 
-const { nextLevel, levelData } = useLevel();
+const { level, levelData, nextLevel } = useLevel();
 
-const levelCount: number = levels.length;
+const levelCount: number = levels.length - 1;
 const className = computed(() => `level-${props.level.toString()}`);
+const hasTouchScreenSupport = window.matchMedia("(hover: none)").matches;
 
 const onKeyUp = (event: KeyboardEvent) => {
   if (!activePart.value) {
@@ -80,7 +81,14 @@ onUnmounted(() => {
 
 <template>
   <div class="display">
-    <div v-if="levelSolved" class="level-solved">
+    <div v-if="level == 0" class="menu-screen">
+      <p>🦝 + 🪤 = 📦</p>
+      <button type="button" @click="nextLevel">
+        Start
+        <Icon name="arrow-right" />
+      </button>
+    </div>
+    <div v-else-if="levelSolved" class="menu-screen">
       <p>🦝 💚 {{ levelData.collectable }}</p>
       <p>Geschafft</p>
       <button type="button" v-if="level < levelCount" @click="nextLevel">
@@ -104,12 +112,12 @@ onUnmounted(() => {
   </div>
   <div class="controller">
     <div class="controller__section">
-      <div class="legend">
+      <template v-if="!hasTouchScreenSupport">
         <span class="key position--top">W</span>
         <span class="key position--right">D</span>
         <span class="key position--bottom">S</span>
         <span class="key position--left">A</span>
-      </div>
+      </template>
       <div class="btn btn--center"></div>
       <button
         class="btn btn--left"
@@ -141,12 +149,12 @@ onUnmounted(() => {
       </button>
     </div>
     <div class="controller__section">
-      <div class="legend">
+      <template v-if="!hasTouchScreenSupport">
         <span class="key position--top">P</span>
         <span class="key position--right">Ä</span>
         <span class="key position--bottom">Ö</span>
         <span class="key position--left">L</span>
-      </div>
+      </template>
       <button
         class="btn btn--right btn--round"
         @click="rotate"
@@ -164,7 +172,7 @@ onUnmounted(() => {
       <button
         class="btn btn--bottom btn--round"
         @click="nextPart"
-        :disabled="levelSolved"
+        :disabled="level == 0 || levelSolved"
       >
         <Icon name="arrow-exchange" />
       </button>
@@ -193,7 +201,7 @@ onUnmounted(() => {
   margin-top: 20px;
 }
 
-.level-solved {
+.menu-screen {
   width: ($integerColumns * $sizeCell) +
     (($integerColumns - 1) * $sizeBlockBorder);
   height: ($integerRows * $sizeCell) + (($integerRows - 1) * $sizeBlockBorder);
@@ -253,17 +261,20 @@ h1 {
 }
 
 .controller {
-  max-width: 294px;
+  max-width: 334px;
   align-self: center;
   display: grid;
-  grid-template-columns: repeat(2, 120px);
-  grid-template-rows: 120px;
-  gap: 54px;
-  margin-top: 40px;
+  grid-template-columns: repeat(2, 160px);
+  grid-template-rows: 160px;
+  gap: 14px;
+  margin-top: 20px;
 }
 
 .controller__section {
   position: relative;
+  background-color: $colorGamePad;
+  border-radius: 50%;
+  box-shadow: inset 0 0 10px $colorGamePadShadow;
 }
 
 .btn {
@@ -302,7 +313,7 @@ h1 {
 }
 
 .btn--top {
-  top: 0;
+  top: 20px;
   left: 50%;
   transform: translateX(-50%);
   border-bottom-right-radius: 0;
@@ -312,7 +323,7 @@ h1 {
 
 .btn--right {
   top: 50%;
-  right: 0;
+  right: 20px;
   transform: translateY(-50%);
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
@@ -320,7 +331,7 @@ h1 {
 }
 
 .btn--bottom {
-  bottom: 0;
+  bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
   border-top-right-radius: 0;
@@ -330,7 +341,7 @@ h1 {
 
 .btn--left {
   top: 50%;
-  left: 0;
+  left: 20px;
   transform: translateY(-50%);
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
@@ -344,24 +355,6 @@ h1 {
   border-radius: 0;
   border: none;
   pointer-events: none;
-}
-
-.legend {
-  height: 160px;
-  background-color: $colorGamePad;
-  position: absolute;
-  top: -20px;
-  left: -20px;
-  right: -20px;
-  border-radius: 50%;
-
-  span {
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    line-height: 20px;
-    text-align: center;
-  }
 }
 
 .position--top {
@@ -393,13 +386,12 @@ h1 {
 }
 
 .key {
-  font-size: 16px;
-  font-weight: bold;
+  display: inline-block;
+  width: 20px;
+  line-height: 20px;
+  text-align: center;
+  font-size: 14px;
   font-family: monospace;
   color: $colorShortcutKey;
-}
-
-.game--touch .key {
-  display: none;
 }
 </style>

@@ -1,15 +1,17 @@
 import { levels } from "@/levels";
 import { computed, ref, type Ref } from "vue";
 
-const level: Ref<number, number> = ref(1);
+const level: Ref<number, number> = ref(0);
 
 const nextLevel = () => {
-  const levelCount = levels.length;
-  level.value = Math.min(level.value + 1, levelCount);
+  const currentLevel = level.value;
+  const nextLevel = currentLevel + 1;
+  const lastLevel = levels.length;
+  level.value = Math.min(nextLevel, lastLevel);
 };
 
-const levelData = computed(() => levels[level.value - 1]);
+const levelData = computed(() => levels[level.value]);
 
 export function useLevel() {
-  return { level, nextLevel, levelData };
+  return { level, levelData, nextLevel };
 }

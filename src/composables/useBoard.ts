@@ -65,7 +65,7 @@ export function useBoard(level: () => number) {
         part.type,
         isTrashBin,
         active,
-        underlyingBlock.type === "e" ? null : underlyingBlock,
+        underlyingBlock.type === "e" ? null : underlyingBlock
       );
     });
   };
@@ -323,7 +323,7 @@ export function useBoard(level: () => number) {
       levelSolved.value = false;
     } else {
       levelSolved.value = conflictingBlocks.every(
-        (block) => block.isTrashBin && block.conflictingBlock?.type === "r",
+        (block) => block.isTrashBin && block.conflictingBlock?.type === "r"
       );
     }
   };
@@ -332,13 +332,9 @@ export function useBoard(level: () => number) {
     level,
     (newLevel) => {
       // clear board for new level
-      const levelData = levels[newLevel - 1];
+      const levelData = levels[newLevel];
       const clones = levelData.parts.map((part) => {
-        const clone: Part = {
-          type: part.type,
-          rotations: part.rotations,
-          position: part.position,
-        };
+        const clone: Part = { ...part };
         return clone;
       });
       parts.value = [...clones];
@@ -347,7 +343,7 @@ export function useBoard(level: () => number) {
 
       drawBoard();
     },
-    { immediate: true },
+    { immediate: true }
   );
 
   return {
