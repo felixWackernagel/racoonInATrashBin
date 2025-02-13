@@ -130,12 +130,7 @@ export function useBoard(level: () => number) {
   };
 
   const activatePart = (part: Part): void => {
-    const clone: Part = {
-      type: part.type,
-      rotations: part.rotations,
-      position: part.position,
-    };
-    activePart.value = clone;
+    activePart.value = { ...part };
   };
 
   const deactivatePart = () => {
