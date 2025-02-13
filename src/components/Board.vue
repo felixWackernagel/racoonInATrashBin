@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, defineProps } from "vue";
+import { computed } from "vue";
 import { useBoard } from "@/composables/useBoard";
 import { useLevel } from "@/composables/useLevel";
 import Cell from "@/components/Cell.vue";
