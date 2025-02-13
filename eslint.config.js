@@ -16,6 +16,13 @@ export default [
 
   ...pluginVue.configs['flat/essential'],
   ...vueTsEslintConfig(),
+
+  {
+    name: 'custom refinements',
+    rules: {
+      'vue/multi-word-component-names': 'off'
+    }
+  },
   
   {
     ...pluginVitest.configs.recommended,
