@@ -14,7 +14,7 @@ export function useBlocks() {
     type: ModelType,
     isTrashBin: boolean,
     isActive: boolean,
-    conflictingBlock: Block | null
+    conflictingBlock: Block | null,
   ): Block => {
     return {
       type: type,
