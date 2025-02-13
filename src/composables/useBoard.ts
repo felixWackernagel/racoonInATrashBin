@@ -1,5 +1,5 @@
 import { levels } from "@/levels";
-import type { Block, Part } from "@/types";
+import type { Block, Part, RowColCell } from "@/types";
 import { MODELS } from "@/types";
 import { ref, watch } from "vue";
 import { useBlocks } from "@/composables/useBlocks";
@@ -18,8 +18,8 @@ export function useBoard(level: () => number) {
     return [row, column];
   };
 
-  const modelToCoordinates = (shape: number[][]): number[][] => {
-    const coordinates = [];
+  const modelToCoordinates = (shape: number[][]): RowColCell[] => {
+    const coordinates: RowColCell[] = [];
 
     const rows = shape.length;
     const columns = shape[0].length;
@@ -56,20 +56,18 @@ export function useBoard(level: () => number) {
     const startCoordinates = positionToCoordinates(part.position);
     const modelCoordinates = modelToCoordinates(model);
 
-    modelCoordinates.forEach(
-      ([row, column, cell]: [number, number, number]) => {
-        const x = row + startCoordinates[0];
-        const y = column + startCoordinates[1];
-        const isTrashBin = cell === 2;
-        const underlyingBlock = board.value[x][y];
-        board.value[x][y] = typedBlock(
-          part.type,
-          isTrashBin,
-          active,
-          underlyingBlock.type === "e" ? null : underlyingBlock,
-        );
-      },
-    );
+    modelCoordinates.forEach(([row, column, cell]: RowColCell) => {
+      const x = row + startCoordinates[0];
+      const y = column + startCoordinates[1];
+      const isTrashBin = cell === 2;
+      const underlyingBlock = board.value[x][y];
+      board.value[x][y] = typedBlock(
+        part.type,
+        isTrashBin,
+        active,
+        underlyingBlock.type === "e" ? null : underlyingBlock,
+      );
+    });
   };
 
   const drawBoard = () => {
