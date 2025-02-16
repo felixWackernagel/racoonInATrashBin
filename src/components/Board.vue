@@ -27,7 +27,7 @@ const {
   levelSolved,
 } = useBoard(() => props.level);
 
-const { level, levelData, nextLevel } = useLevel();
+const { levelData, nextLevel } = useLevel();
 
 const levelCount: number = levels.length - 1;
 const className = computed(() => `level-${props.level.toString()}`);
