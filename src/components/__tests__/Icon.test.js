@@ -1,13 +1,15 @@
-import { test, expect } from "vitest";
+import { describe, it, expect } from "vitest";
 
-import { mount } from "@vue/test-utils";
-import Icon from "@/components/Icon.vue";
+import { shallowMount } from "@vue/test-utils";
+import Icon from "../Icon.vue";
 
-test("Test Icon Component", async () => {
-  const wrapper = mount(Icon, {
-    props: {
-      name: "arrow-right",
-    },
+describe("Icon-Component", () => {
+  it( "should show css-class 'icon--arrow-right' when icon name is 'arrow-right'", () => {
+    const wrapper = shallowMount(Icon, {
+      props: {
+        name: "arrow-right",
+      },
+    });
+    expect(wrapper.classes()).toContain("icon--arrow-right");
   });
-  expect(wrapper.text()).toContain("icon--arrow-right");
 });

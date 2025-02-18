@@ -11,6 +11,7 @@ defineProps<Props>();
   <svg
     v-if="name === 'arrow-right'"
     class="icon--arrow-right"
+    role="presentation"
     xmlns="http://www.w3.org/2000/svg"
     width="20"
     height="20"
@@ -23,21 +24,24 @@ defineProps<Props>();
       clip-rule="evenodd"
     />
   </svg>
-  <template v-else-if="name === 'triangle-left'">
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-    >
-      <path
-        fill="currentColor"
-        d="m8.165 11.63l6.63-6.43C15.21 4.799 16 5.042 16 5.57v12.86c0 .528-.79.771-1.205.37l-6.63-6.43a.499.499 0 0 1 0-.74Z"
-      />
-    </svg>
-  </template>
+  <svg
+    v-else-if="name === 'triangle-left'"
+    class="icon--triangle-left"
+    role="presentation"
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+  >
+    <path
+      fill="currentColor"
+      d="m8.165 11.63l6.63-6.43C15.21 4.799 16 5.042 16 5.57v12.86c0 .528-.79.771-1.205.37l-6.63-6.43a.499.499 0 0 1 0-.74Z"
+    />
+  </svg>
   <svg
     v-else-if="name === 'triangle-up'"
+    class="icon--triangle-up"
+    role="presentation"
     xmlns="http://www.w3.org/2000/svg"
     width="24"
     height="24"
@@ -50,6 +54,8 @@ defineProps<Props>();
   </svg>
   <svg
     v-else-if="name === 'triangle-down'"
+    class="icon--triangle-down"
+    role="presentation"
     xmlns="http://www.w3.org/2000/svg"
     width="24"
     height="24"
@@ -62,6 +68,8 @@ defineProps<Props>();
   </svg>
   <svg
     v-else-if="name === 'triangle-right'"
+    class="icon--triangle-right"
+    role="presentation"
     xmlns="http://www.w3.org/2000/svg"
     width="24"
     height="24"
@@ -74,6 +82,8 @@ defineProps<Props>();
   </svg>
   <svg
     v-else-if="name === 'arrow-circle'"
+    class="icon--arrow-circle"
+    role="presentation"
     xmlns="http://www.w3.org/2000/svg"
     width="24"
     height="24"
@@ -86,6 +96,8 @@ defineProps<Props>();
   </svg>
   <svg
     v-else-if="name === 'arrow-in'"
+    class="icon--arrow-in"
+    role="presentation"
     xmlns="http://www.w3.org/2000/svg"
     width="24"
     height="24"
@@ -107,6 +119,8 @@ defineProps<Props>();
   </svg>
   <svg
     v-else-if="name === 'arrow-exchange'"
+    class="icon--arrow-exchange"
+    role="presentation"
     xmlns="http://www.w3.org/2000/svg"
     width="24"
     height="24"
@@ -125,6 +139,8 @@ defineProps<Props>();
   </svg>
   <svg
     v-else-if="name === 'delete'"
+    class="icon--delete"
+    role="presentation"
     xmlns="http://www.w3.org/2000/svg"
     width="24"
     height="24"
